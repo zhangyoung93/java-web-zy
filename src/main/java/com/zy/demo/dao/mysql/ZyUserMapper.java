@@ -1,7 +1,15 @@
 package com.zy.demo.dao.mysql;
 
 import com.zy.demo.model.ZyUser;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+/**
+ * ZyUserMapper
+ * @author zy
+ */
+@Repository
 public interface ZyUserMapper {
 
     int deleteByPrimaryKey(Long userId);
@@ -15,4 +23,6 @@ public interface ZyUserMapper {
     int updateByPrimaryKeySelective(ZyUser record);
 
     int updateByPrimaryKey(ZyUser record);
+
+    List<ZyUser> selectByPaging();
 }

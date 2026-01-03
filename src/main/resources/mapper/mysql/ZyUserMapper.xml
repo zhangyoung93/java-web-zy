@@ -73,4 +73,10 @@
       login_pwd = #{loginPwd,jdbcType=VARCHAR}
     where user_id = #{userId,jdbcType=BIGINT}
   </update>
+
+  <select id="selectByPaging" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from zy_user
+  </select>
 </mapper>

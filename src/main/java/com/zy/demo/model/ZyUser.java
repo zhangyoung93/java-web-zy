@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * zy_user
- * @author 
+ * @author zy
  */
 public class ZyUser implements Serializable {
     /**
@@ -60,4 +60,5 @@ public class ZyUser implements Serializable {
     public void setLoginPwd(String loginPwd) {
         this.loginPwd = loginPwd;
     }
+
 }
