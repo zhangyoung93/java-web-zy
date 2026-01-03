@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.zy</groupId>
-    <artifactId>java-web-demo</artifactId>
+    <artifactId>java-web-zy</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>java-web-demo</name>
+    <name>java-web-zy</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>

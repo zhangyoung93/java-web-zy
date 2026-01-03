@@ -3,7 +3,7 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.127.129:3306/zy?characterEncoding=utf8&amp;useOldAliasMetadataBehavior=true&amp;autoReconnect=true
+    url: jdbc:mysql://localhost:3306/zy?characterEncoding=utf8&useOldAliasMetadataBehavior=true&autoReconnect=true&useSSL=false&serverTimezone=UTC
     username: root
     password: root
     druid:
