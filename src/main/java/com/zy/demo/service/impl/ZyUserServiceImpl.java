@@ -38,7 +38,7 @@ public class ZyUserServiceImpl implements ZyUserService {
     @Override
     public Page<ZyUser> selectUserByPaging(int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<ZyUser> zyUserList = this.zyUserMapper.selectByPaging();
+        List<ZyUser> zyUserList = this.zyUserMapper.selectByPaging(null,null);
         Page<ZyUser> page = (Page<ZyUser>) zyUserList;
         log.info("selectUserByPaging,page={}", page.toString());
         return page;

@@ -78,6 +78,13 @@
     select
     <include refid="Base_Column_List" />
     from zy_user
+    where 1 = 1
+    <if test="userFullName != null">
+      and user_full_name = #{userFullName,jdbcType=VARCHAR}
+    </if>
+    <if test="loginName != null">
+      and login_name = #{loginName,jdbcType=VARCHAR}
+    </if>
   </select>
 
   <insert id="insertOne" parameterType="com.zy.demo.model.ZyUser">
@@ -92,4 +99,22 @@
       (#{user.userId,jdbcType=BIGINT}, #{user.userFullName,jdbcType=VARCHAR}, #{user.loginName,jdbcType=VARCHAR}, #{user.loginPwd,jdbcType=VARCHAR})
     </foreach>
   </insert>
+
+  <select id="selectByIndex" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from zy_user
+    where 1 = 1
+    and user_full_name = #{param1}
+    and login_name = #{param2}
+  </select>
+
+  <select id="selectByMap" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from zy_user
+    where 1 = 1
+    and user_full_name = #{userFullName}
+    and login_name = #{loginName}
+  </select>
 </mapper>
