@@ -1,6 +1,11 @@
 server:
   port: 8082
 spring:
+  application:
+    name: java-web-zy
+  aop:
+    #Spring动态代理方式：springboot2.X后默认是CGLIB(true)
+    proxy-target-class: true
   datasource:
     #集成druid连接池
     type: com.alibaba.druid.pool.DruidDataSource
@@ -69,7 +74,7 @@ swagger:
 #logback
 logging:
   file:
-    name: JavaWebDemo.log
+    name: java-web-zy.log
   #打印SQL日志
   level:
     com.zy.demo.dao: DEBUG

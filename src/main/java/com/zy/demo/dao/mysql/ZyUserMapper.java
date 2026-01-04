@@ -25,4 +25,8 @@ public interface ZyUserMapper {
     int updateByPrimaryKey(ZyUser record);
 
     List<ZyUser> selectByPaging();
+
+    int insertOne(ZyUser zyUser);
+
+    int insertBatch(List<ZyUser> zyUserList);
 }

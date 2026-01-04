@@ -79,4 +79,17 @@
     <include refid="Base_Column_List" />
     from zy_user
   </select>
+
+  <insert id="insertOne" parameterType="com.zy.demo.model.ZyUser">
+    insert into zy_user (user_id, user_full_name, login_name, login_pwd)
+    values (#{userId,jdbcType=BIGINT}, #{userFullName,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, #{loginPwd,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertBatch">
+    insert into zy_user (user_id, user_full_name, login_name, login_pwd)
+    values 
+    <foreach collection="list" item="user" separator=",">
+      (#{user.userId,jdbcType=BIGINT}, #{user.userFullName,jdbcType=VARCHAR}, #{user.loginName,jdbcType=VARCHAR}, #{user.loginPwd,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
 </mapper>
