@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.zy</groupId>
-    <artifactId>java-web-demo</artifactId>
+    <artifactId>java-web-zy</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>java-web-demo</name>
+    <name>java-web-zy</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
@@ -19,7 +19,7 @@
         <mysql.connector.java.version>5.1.47</mysql.connector.java.version>
         <mybatis.spring.boot.starter.version>2.1.4</mybatis.spring.boot.starter.version>
         <druid.spring.boot.starter.version>1.1.10</druid.spring.boot.starter.version>
-        <pagehelper.version>5.2.0</pagehelper.version>
+        <pagehelperStarter.version>2.1.1</pagehelperStarter.version>
         <lombok.version>1.18.18</lombok.version>
         <swagger.spring.boot.starter.version>1.9.1.RELEASE</swagger.spring.boot.starter.version>
         <validation.api.version>1.1.0.Final</validation.api.version>
@@ -69,8 +69,8 @@
         <!--分页插件-->
         <dependency>
             <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper</artifactId>
-            <version>${pagehelper.version}</version>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>${pagehelperStarter.version}</version>
         </dependency>
 
         <!--Slf4j-->
