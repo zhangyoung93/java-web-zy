@@ -68,9 +68,11 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zy.demo.model.ZyUser">
     update zy_user
-    set user_full_name = #{userFullName,jdbcType=VARCHAR},
+    <trim prefix="set" suffixOverrides=",">
+      user_full_name = #{userFullName,jdbcType=VARCHAR},
       login_name = #{loginName,jdbcType=VARCHAR},
-      login_pwd = #{loginPwd,jdbcType=VARCHAR}
+      login_pwd = #{loginPwd,jdbcType=VARCHAR},
+    </trim>
     where user_id = #{userId,jdbcType=BIGINT}
   </update>
 
@@ -78,13 +80,14 @@
     select
     <include refid="Base_Column_List" />
     from zy_user
-    where 1 = 1
-    <if test="userFullName != null">
-      and user_full_name = #{userFullName,jdbcType=VARCHAR}
-    </if>
-    <if test="loginName != null">
-      and login_name = #{loginName,jdbcType=VARCHAR}
-    </if>
+    <where>
+      <if test="userFullName != null">
+        and user_full_name = #{userFullName,jdbcType=VARCHAR}
+      </if>
+      <if test="loginName != null">
+        and login_name = #{loginName,jdbcType=VARCHAR}
+      </if>
+    </where>
   </select>
 
   <insert id="insertOne" parameterType="com.zy.demo.model.ZyUser">
@@ -101,20 +104,32 @@
   </insert>
 
   <select id="selectByIndex" resultMap="BaseResultMap">
+    <bind name="attr" value="'%' + param1 + '%'"/>
     select
     <include refid="Base_Column_List" />
     from zy_user
-    where 1 = 1
-    and user_full_name = #{param1}
-    and login_name = #{param2}
+    <where>
+      and user_full_name like #{attr}
+      and login_name = #{param2}
+    </where>
   </select>
 
   <select id="selectByMap" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from zy_user
-    where 1 = 1
-    and user_full_name = #{userFullName}
-    and login_name = #{loginName}
+    <where>
+      <choose>
+        <when test="userFullName != null and userFullName != ''">
+          and user_full_name = #{userFullName}
+        </when>
+        <when test="loginName != null and loginName != ''">
+          and login_name = #{loginName}
+        </when>
+        <otherwise>
+          and 1 = 1
+        </otherwise>
+      </choose>
+    </where>
   </select>
 </mapper>
