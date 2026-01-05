@@ -7,6 +7,12 @@
     <result column="login_name" jdbcType="VARCHAR" property="loginName" />
     <result column="login_pwd" jdbcType="VARCHAR" property="loginPwd" />
   </resultMap>
+  <parameterMap id="baseCondMap" type="com.zy.demo.model.ZyUser">
+    <parameter property="userId" jdbcType="BIGINT"/>
+    <parameter property="userFullName" jdbcType="VARCHAR"/>
+    <parameter property="loginName" jdbcType="VARCHAR"/>
+    <parameter property="loginPwd" jdbcType="VARCHAR"/>
+  </parameterMap>
   <sql id="Base_Column_List">
     user_id, user_full_name, login_name, login_pwd
   </sql>
@@ -20,11 +26,12 @@
     delete from zy_user
     where user_id = #{userId,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" keyColumn="user_id" keyProperty="userId" parameterType="com.zy.demo.model.ZyUser" useGeneratedKeys="true">
-    insert into zy_user (user_full_name, login_name, login_pwd
-      )
-    values (#{userFullName,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, #{loginPwd,jdbcType=VARCHAR}
-      )
+  <insert id="insert" parameterType="com.zy.demo.model.ZyUser">
+    insert into zy_user (user_full_name, login_name, login_pwd)
+    values (#{userFullName,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, #{loginPwd,jdbcType=VARCHAR})
+    <selectKey keyProperty="userId" keyColumn="user_id" order="AFTER" resultType="long">
+      select LAST_INSERT_ID()
+    </selectKey>
   </insert>
   <insert id="insertSelective" keyColumn="user_id" keyProperty="userId" parameterType="com.zy.demo.model.ZyUser" useGeneratedKeys="true">
     insert into zy_user
@@ -90,7 +97,7 @@
     </where>
   </select>
 
-  <insert id="insertOne" parameterType="com.zy.demo.model.ZyUser">
+  <insert id="insertOne" parameterMap="baseCondMap">
     insert into zy_user (user_id, user_full_name, login_name, login_pwd)
     values (#{userId,jdbcType=BIGINT}, #{userFullName,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, #{loginPwd,jdbcType=VARCHAR})
   </insert>
