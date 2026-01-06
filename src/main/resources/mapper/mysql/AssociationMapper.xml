@@ -15,21 +15,41 @@
                 select="com.zy.demo.dao.mysql.ZyUserIdCardMapper.selectByUserId"
                 column="user_id"
                 fetchType="lazy"/>
+        <!--一对多关联查询-->
+<!--        <collection property="zyUserJobList" ofType="com.zy.demo.model.ZyUserJob">-->
+<!--            <id property="jobId" column="job_id"/>-->
+<!--            <result property="userId" column="user_id"/>-->
+<!--            <result property="jobName" column="job_name"/>-->
+<!--        </collection>-->
+        <!--一对多嵌套查询-->
+        <collection
+                property="zyUserJobList"
+                select="com.zy.demo.dao.mysql.ZyUserJobMapper.selectByUserId"
+                column="user_id"
+                fetchType="lazy"/>
     </resultMap>
 
-    <sql id="Base_Column_List">
-        zu.user_id, zu.user_full_name, zuid.id_card_no
-    </sql>
-
-    <select id="selectJointByOneOnOne" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List" />
+    <select id="selectJointByOneToOne" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select zu.user_id, zu.user_full_name, zuid.id_card_no
         from zy_user zu
         left join zy_user_id_card zuid on zu.user_id = zuid.user_id
         where zu.user_id = #{userId,jdbcType=BIGINT}
     </select>
 
-    <select id="selectNestByOneOnOne" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <select id="selectNestByOneToOne" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select user_id
+        from zy_user
+        where user_id = #{userId,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectJointByOneToMany" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select zu.user_id, zu.user_full_name, zuj.job_id, zuj.job_name
+        from zy_user zu
+        left join zy_user_job zuj on zu.user_id = zuj.user_id
+        where zu.user_id = #{userId,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectNestByOneToMany" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select user_id
         from zy_user
         where user_id = #{userId,jdbcType=BIGINT}

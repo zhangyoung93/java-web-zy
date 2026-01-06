@@ -2,6 +2,7 @@ package com.zy.demo.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * zy_user
@@ -43,6 +44,8 @@ public class ZyUser implements Serializable {
      * 身份证信息
      */
     private ZyUserIdCard zyUserIdCard;
+
+    private List<ZyUserJob> zyUserJobList;
 
     private static final long serialVersionUID = 1L;
 
@@ -100,5 +103,13 @@ public class ZyUser implements Serializable {
 
     public void setZyUserIdCard(ZyUserIdCard zyUserIdCard) {
         this.zyUserIdCard = zyUserIdCard;
+    }
+
+    public List<ZyUserJob> getZyUserJobList() {
+        return zyUserJobList;
+    }
+
+    public void setZyUserJobList(List<ZyUserJob> zyUserJobList) {
+        this.zyUserJobList = zyUserJobList;
     }
 }
