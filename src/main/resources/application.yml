@@ -51,10 +51,12 @@ spring:
 mybatis:
   mapper-locations: classpath:mapper/mysql/*.xml
   configuration:
-    #开启延迟加载（关联查询提高性能）
+    #开启延迟加载（关联查询提高性能）,默认关闭
     lazy-loading-enabled: true
-    #只有真正查询关联对象属性时才加载关联对象的数据
+    #是否积极延迟加载。只有真正查询关联对象属性时才加载关联对象的数据，开启延迟加载时需要设置false
     aggressive-lazy-loading: false
+    #二级缓存开启配置，默认开启，但是二级缓存需要同时满足xml配置cache、实体对象实现序列化接口才能生效。
+    cache-enabled: true
 
 #分页插件
 pagehelper:
