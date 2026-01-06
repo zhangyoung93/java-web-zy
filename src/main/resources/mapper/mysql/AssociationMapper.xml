@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zy.demo.dao.mysql.AssociationMapper">
+    <resultMap id="BaseResultMap" type="com.zy.demo.model.ZyUser">
+        <id column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="user_full_name" jdbcType="VARCHAR" property="userFullName" />
+        <!--一对一关联查询-->
+<!--        <association property="zyUserIdCard" javaType="com.zy.demo.model.ZyUserIdCard">-->
+<!--            <id property="cardId" column="card_id"/>-->
+<!--            <result property="idCardNo" column="id_card_no"/>-->
+<!--        </association>-->
+        <!--一对一嵌套查询-->
+        <association
+                property="zyUserIdCard"
+                select="com.zy.demo.dao.mysql.ZyUserIdCardMapper.selectByUserId"
+                column="user_id"
+                fetchType="lazy"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        zu.user_id, zu.user_full_name, zuid.id_card_no
+    </sql>
+
+    <select id="selectJointByOneOnOne" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from zy_user zu
+        left join zy_user_id_card zuid on zu.user_id = zuid.user_id
+        where zu.user_id = #{userId,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectNestByOneOnOne" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select user_id
+        from zy_user
+        where user_id = #{userId,jdbcType=BIGINT}
+    </select>
+</mapper>

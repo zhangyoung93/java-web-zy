@@ -1,9 +1,11 @@
 package com.zy.demo.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * zy_user
+ *
  * @author zy
  */
 public class ZyUser implements Serializable {
@@ -26,6 +28,21 @@ public class ZyUser implements Serializable {
      * 登录密码
      */
     private String loginPwd;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
+
+    /**
+     * 身份证信息
+     */
+    private ZyUserIdCard zyUserIdCard;
 
     private static final long serialVersionUID = 1L;
 
@@ -61,4 +78,27 @@ public class ZyUser implements Serializable {
         this.loginPwd = loginPwd;
     }
 
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public ZyUserIdCard getZyUserIdCard() {
+        return zyUserIdCard;
+    }
+
+    public void setZyUserIdCard(ZyUserIdCard zyUserIdCard) {
+        this.zyUserIdCard = zyUserIdCard;
+    }
 }

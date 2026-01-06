@@ -6,6 +6,8 @@
     <result column="user_full_name" jdbcType="VARCHAR" property="userFullName" />
     <result column="login_name" jdbcType="VARCHAR" property="loginName" />
     <result column="login_pwd" jdbcType="VARCHAR" property="loginPwd" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <parameterMap id="baseCondMap" type="com.zy.demo.model.ZyUser">
     <parameter property="userId" jdbcType="BIGINT"/>
@@ -14,7 +16,7 @@
     <parameter property="loginPwd" jdbcType="VARCHAR"/>
   </parameterMap>
   <sql id="Base_Column_List">
-    user_id, user_full_name, login_name, login_pwd
+    user_id, user_full_name, login_name, login_pwd, area_id, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -70,6 +72,9 @@
       <if test="loginPwd != null">
         login_pwd = #{loginPwd,jdbcType=VARCHAR},
       </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where user_id = #{userId,jdbcType=BIGINT}
   </update>
@@ -79,6 +84,7 @@
       user_full_name = #{userFullName,jdbcType=VARCHAR},
       login_name = #{loginName,jdbcType=VARCHAR},
       login_pwd = #{loginPwd,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
     </trim>
     where user_id = #{userId,jdbcType=BIGINT}
   </update>

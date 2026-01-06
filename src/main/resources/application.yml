@@ -50,6 +50,11 @@ spring:
 #mybatis
 mybatis:
   mapper-locations: classpath:mapper/mysql/*.xml
+  configuration:
+    #开启延迟加载（关联查询提高性能）
+    lazy-loading-enabled: true
+    #只有真正查询关联对象属性时才加载关联对象的数据
+    aggressive-lazy-loading: false
 
 #分页插件
 pagehelper:
