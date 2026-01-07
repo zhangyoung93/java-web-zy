@@ -1,4 +1,4 @@
-package com.zy.demo.config;
+package com.zy.demo.pojo;
 
 import com.zy.demo.constant.ResponseEnum;
 

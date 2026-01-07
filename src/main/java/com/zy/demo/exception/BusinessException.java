@@ -1,4 +1,4 @@
-package com.zy.demo.config;
+package com.zy.demo.exception;
 
 /**
  * 业务异常

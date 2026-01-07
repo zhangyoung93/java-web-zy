@@ -2,8 +2,8 @@ package com.zy.demo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.zy.demo.config.BaseResponse;
-import com.zy.demo.config.BusinessException;
+import com.zy.demo.pojo.BaseResponse;
+import com.zy.demo.exception.BusinessException;
 import com.zy.demo.pojo.LoginDto;
 import com.zy.demo.service.LoginService;
 import lombok.extern.slf4j.Slf4j;

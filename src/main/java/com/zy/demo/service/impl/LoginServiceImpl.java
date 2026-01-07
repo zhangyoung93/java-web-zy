@@ -1,6 +1,6 @@
 package com.zy.demo.service.impl;
 
-import com.zy.demo.config.BusinessException;
+import com.zy.demo.exception.BusinessException;
 import com.zy.demo.dao.mysql.ZyUserMapper;
 import com.zy.demo.pojo.LoginDto;
 import com.zy.demo.service.LoginService;
