@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * springboot启动类
+ * MapperScan注解生成的mybatis代理对象底层依赖SqlSessionTemplate，线程安全
  * @author zy
  */
 @SpringBootApplication
