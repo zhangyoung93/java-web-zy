@@ -57,6 +57,10 @@ mybatis:
     aggressive-lazy-loading: false
     #二级缓存开启配置，默认开启，但是二级缓存需要同时满足xml配置cache、实体对象实现序列化接口才能生效。
     cache-enabled: true
+  #自定义插件配置
+  plugin:
+    #sql耗时阈值，单位毫秒
+    sql-cost-time-threshold: 2000
 
 #分页插件
 pagehelper:
