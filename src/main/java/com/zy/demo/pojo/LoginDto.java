@@ -1,19 +1,20 @@
 package com.zy.demo.pojo;
 
-import com.zy.demo.model.User;
+import com.zy.demo.model.ZyUser;
 
 /**
  * 登录DTO
+ *
  * @author zy
  */
 public class LoginDto {
-    private User user;
+    private ZyUser zyUser;
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(ZyUser zyUser) {
+        this.zyUser = zyUser;
     }
 
-    public User getUser() {
-        return this.user;
+    public ZyUser getUser() {
+        return this.zyUser;
     }
 }

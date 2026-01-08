@@ -6,9 +6,17 @@
     <result column="user_full_name" jdbcType="VARCHAR" property="userFullName" />
     <result column="login_name" jdbcType="VARCHAR" property="loginName" />
     <result column="login_pwd" jdbcType="VARCHAR" property="loginPwd" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
+  <parameterMap id="baseCondMap" type="com.zy.demo.model.ZyUser">
+    <parameter property="userId" jdbcType="BIGINT"/>
+    <parameter property="userFullName" jdbcType="VARCHAR"/>
+    <parameter property="loginName" jdbcType="VARCHAR"/>
+    <parameter property="loginPwd" jdbcType="VARCHAR"/>
+  </parameterMap>
   <sql id="Base_Column_List">
-    user_id, user_full_name, login_name, login_pwd
+    user_id, user_full_name, login_name, login_pwd, area_id, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -20,11 +28,12 @@
     delete from zy_user
     where user_id = #{userId,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" keyColumn="user_id" keyProperty="userId" parameterType="com.zy.demo.model.ZyUser" useGeneratedKeys="true">
-    insert into zy_user (user_full_name, login_name, login_pwd
-      )
-    values (#{userFullName,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, #{loginPwd,jdbcType=VARCHAR}
-      )
+  <insert id="insert" parameterType="com.zy.demo.model.ZyUser">
+    insert into zy_user (user_full_name, login_name, login_pwd)
+    values (#{userFullName,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, #{loginPwd,jdbcType=VARCHAR})
+    <selectKey keyProperty="userId" keyColumn="user_id" order="AFTER" resultType="long">
+      select LAST_INSERT_ID()
+    </selectKey>
   </insert>
   <insert id="insertSelective" keyColumn="user_id" keyProperty="userId" parameterType="com.zy.demo.model.ZyUser" useGeneratedKeys="true">
     insert into zy_user
@@ -63,14 +72,20 @@
       <if test="loginPwd != null">
         login_pwd = #{loginPwd,jdbcType=VARCHAR},
       </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where user_id = #{userId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zy.demo.model.ZyUser">
     update zy_user
-    set user_full_name = #{userFullName,jdbcType=VARCHAR},
+    <trim prefix="set" suffixOverrides=",">
+      user_full_name = #{userFullName,jdbcType=VARCHAR},
       login_name = #{loginName,jdbcType=VARCHAR},
-      login_pwd = #{loginPwd,jdbcType=VARCHAR}
+      login_pwd = #{loginPwd,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+    </trim>
     where user_id = #{userId,jdbcType=BIGINT}
   </update>
 
@@ -78,5 +93,56 @@
     select
     <include refid="Base_Column_List" />
     from zy_user
+    <where>
+      <if test="userFullName != null">
+        and user_full_name = #{userFullName,jdbcType=VARCHAR}
+      </if>
+      <if test="loginName != null">
+        and login_name = #{loginName,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
+  <insert id="insertOne" parameterMap="baseCondMap">
+    insert into zy_user (user_id, user_full_name, login_name, login_pwd)
+    values (#{userId,jdbcType=BIGINT}, #{userFullName,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, #{loginPwd,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertBatch">
+    insert into zy_user (user_id, user_full_name, login_name, login_pwd)
+    values 
+    <foreach collection="list" item="user" separator=",">
+      (#{user.userId,jdbcType=BIGINT}, #{user.userFullName,jdbcType=VARCHAR}, #{user.loginName,jdbcType=VARCHAR}, #{user.loginPwd,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+
+  <select id="selectByIndex" resultMap="BaseResultMap">
+    <bind name="attr" value="'%' + param1 + '%'"/>
+    select
+    <include refid="Base_Column_List" />
+    from zy_user
+    <where>
+      and user_full_name like #{attr}
+      and login_name = #{param2}
+    </where>
+  </select>
+
+  <select id="selectByMap" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from zy_user
+    <where>
+      <choose>
+        <when test="userFullName != null and userFullName != ''">
+          and user_full_name = #{userFullName}
+        </when>
+        <when test="loginName != null and loginName != ''">
+          and login_name = #{loginName}
+        </when>
+        <otherwise>
+          and 1 = 1
+        </otherwise>
+      </choose>
+    </where>
   </select>
 </mapper>

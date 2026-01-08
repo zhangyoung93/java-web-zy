@@ -1,6 +1,11 @@
 server:
   port: 8082
 spring:
+  application:
+    name: java-web-zy
+  aop:
+    #Spring动态代理方式：springboot2.X后默认是CGLIB(true)
+    proxy-target-class: true
   datasource:
     #集成druid连接池
     type: com.alibaba.druid.pool.DruidDataSource
@@ -45,6 +50,17 @@ spring:
 #mybatis
 mybatis:
   mapper-locations: classpath:mapper/mysql/*.xml
+  configuration:
+    #开启延迟加载（关联查询提高性能）,默认关闭
+    lazy-loading-enabled: true
+    #是否积极延迟加载。只有真正查询关联对象属性时才加载关联对象的数据，开启延迟加载时需要设置false
+    aggressive-lazy-loading: false
+    #二级缓存开启配置，默认开启，但是二级缓存需要同时满足xml配置cache、实体对象实现序列化接口才能生效。
+    cache-enabled: true
+  #自定义插件配置
+  plugin:
+    #sql耗时阈值，单位毫秒
+    sql-cost-time-threshold: 2000
 
 #分页插件
 pagehelper:
@@ -54,6 +70,38 @@ pagehelper:
   reasonable: true
   # 支持通过 Mapper 参数传递分页参数
   support-methods-arguments: true
+
+#mybatis-plus
+#mybatis-plus:
+#  # 自定义XML文件路径（如需）
+#  mapper-locations: classpath:mapper/mysql/*.xml
+#  configuration:
+#    # 自动下划线转驼峰（默认开启）
+#    map-underscore-to-camel-case: true
+#    # 打印SQL日志（开发环境用）
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    # 集成SLF4J（如Logback）
+#    # log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+#    #开启延迟加载（关联查询提高性能）,默认关闭
+#    lazy-loading-enabled: true
+#    #是否积极延迟加载。只有真正查询关联对象属性时才加载关联对象的数据，开启延迟加载时需要设置false
+#    aggressive-lazy-loading: false
+#    #二级缓存开启配置，默认开启，但是二级缓存需要同时满足xml配置cache、实体对象实现序列化接口才能生效。
+#    cache-enabled: true
+#    # 参数映射：是否允许参数为null（默认true，避免空指针）
+#    call-setters-on-nulls: true
+#  global-config:
+#    db-config:
+#      # 主键自增策略（默认）。AUTO：数据库自增；NONE：无策略；INPUT：手动输入；ASSIGN_ID：雪花算法生成Long型ID
+#      id-type: AUTO
+#      # 全局逻辑删除字段名
+#      logic-delete-field: deleted
+#      # 逻辑删除值（默认1）
+#      logic-delete-value: 1
+#      # 逻辑未删除值（默认0）
+#      logic-not-delete-value: 0
+#    # 打印mybatis-plus启动logo横幅（默认true）
+#    banner: true
 
 #swagger
 swagger:
@@ -69,7 +117,7 @@ swagger:
 #logback
 logging:
   file:
-    name: JavaWebDemo.log
+    name: java-web-zy.log
   #打印SQL日志
   level:
     com.zy.demo.dao: DEBUG

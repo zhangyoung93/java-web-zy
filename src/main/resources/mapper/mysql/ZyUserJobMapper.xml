@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zy.demo.dao.mysql.ZyUserJobMapper">
+  <resultMap id="BaseResultMap" type="com.zy.demo.model.ZyUserJob">
+    <id column="job_id" jdbcType="BIGINT" property="jobId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="job_name" jdbcType="VARCHAR" property="jobName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    job_id, user_id, job_name
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from zy_user_job
+    where job_id = #{jobId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from zy_user_job
+    where job_id = #{jobId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="job_id" keyProperty="jobId" parameterType="com.zy.demo.model.ZyUserJob" useGeneratedKeys="true">
+    insert into zy_user_job (user_id, job_name)
+    values (#{userId,jdbcType=BIGINT}, #{jobName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="job_id" keyProperty="jobId" parameterType="com.zy.demo.model.ZyUserJob" useGeneratedKeys="true">
+    insert into zy_user_job
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="jobId != null">
+        job_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="jobName != null">
+        job_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="jobId != null">
+        #{jobId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="jobName != null">
+        #{jobName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zy.demo.model.ZyUserJob">
+    update zy_user_job
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="jobName != null">
+        job_name = #{jobName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where job_id = #{jobId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zy.demo.model.ZyUserJob">
+    update zy_user_job
+    set user_id = #{userId,jdbcType=BIGINT},
+      job_name = #{jobName,jdbcType=VARCHAR}
+    where job_id = #{jobId,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from zy_user_job
+    where user_id = #{userId,jdbcType=BIGINT}
+  </select>
+</mapper>
