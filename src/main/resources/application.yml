@@ -11,8 +11,8 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/zy?characterEncoding=utf8&useOldAliasMetadataBehavior=true&autoReconnect=true&useSSL=false&serverTimezone=UTC
-    username: root
-    password: root
+    username: ENC(k5IohO2XLuAhwRbqdoQXc1Ab09Of3yQF)
+    password: ENC(k5IohO2XLuAhwRbqdoQXc1Ab09Of3yQF)
     druid:
       # 初始化连接数（默认0，建议5-10）
       initial-size: 5
@@ -121,3 +121,12 @@ logging:
   #打印SQL日志
   level:
     com.zy.demo.dao: DEBUG
+#jasypt
+jasypt:
+  encryptor:
+    #密钥（生产环境要隐藏，换成其它方式）
+    password: zySecret
+    #加密算法（默认PBEWITHHMACSHA512ANDAES_256，需要验证兼容性）
+    algorithm: PBEWithMD5AndDES
+    #初始化向量生成类（确保相同的明文加密后生成不同的密文，增强安全性），默认随机生成。
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
