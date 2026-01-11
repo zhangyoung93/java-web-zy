@@ -46,6 +46,42 @@ spring:
       max-open-prepared-statements: 20
       # 设置异步初始化连接池
       async-init: true
+  #redis配置
+  redis:
+    host: localhost
+    port: 6379
+    password: ENC(6MNWGU5dOwCuwP1QumTiUFZBOZdFRJH7)
+    #数据库索引
+    database: 0
+    #建立连接和数据操作超时时间，单位毫秒
+    timeout: 10000ms
+    #默认lettuce，springboot老版本用jedis
+    client-type: lettuce
+    lettuce:
+      #redis连接池
+      pool:
+        #最大活跃连接数（建议CPU*2）
+        max-active: 8
+        #最大空闲连接数
+        max-idle: 4
+        #最小空闲连接数，避免频繁创建销毁
+        min-idle: 1
+        #客户端获取连接的最大等待时间
+        max-wait: 10000ms
+#    #哨兵模式（读写分离）
+#    sentinel:
+#      #主节点名称
+#      master: mymaster
+#      #所有节点列表
+#      nodes: localhost:6379
+#      #主从节点互相认证的密码，保持一致
+#      password: ENC(6MNWGU5dOwCuwP1QumTiUFZBOZdFRJH7)
+#    #集群模式（分片存储）
+#    cluster:
+#      #所有节点列表
+#      nodes: localhost:6379
+#      #最大重定向其它节点的次数，防止死循环
+#      max-redirects: 3
 
 #mybatis
 mybatis:
@@ -118,9 +154,12 @@ swagger:
 logging:
   file:
     name: java-web-zy.log
-  #打印SQL日志
   level:
+    #打印SQL日志
     com.zy.demo.dao: DEBUG
+    #打印redis日志
+    org.springframework.data.redis: WARN
+
 #jasypt
 jasypt:
   encryptor:

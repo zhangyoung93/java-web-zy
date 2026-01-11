@@ -145,6 +145,17 @@
             <version>${jasypt.spring.boot.starter.version}</version>
         </dependency>
 
+        <!-- Spring Boot Redis （lettuce）-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <!-- redis连接池（适用于jedis、lettuce） -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
