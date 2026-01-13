@@ -1,10 +1,15 @@
 package com.zy.demo.util;
 
+import com.google.common.collect.Lists;
 import com.zy.demo.exception.BusinessException;
+import com.zy.demo.executor.RedisPipelineThreadPool;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -89,5 +94,32 @@ public class RedisOpUtil {
         } catch (Exception e) {
             log.error("Redis-exists操作异常", e);
         }
+    }
+
+    /**
+     * redis管道异步写入
+     *
+     * @param mapList mapList
+     */
+    public void asyncPipelineSet(List<Map<String, String>> mapList) {
+        CompletableFuture.supplyAsync(() -> {
+            List<List<Map<String, String>>> lists = Lists.partition(mapList, 1000);
+            List<Object> resultList = null;
+            for (List<Map<String, String>> maps : lists) {
+                //每1000条数据用pipeline执行一次
+                resultList = this.redisTemplate.executePipelined((RedisCallback<Object>) redisConnection -> {
+                    //打开管道
+                    redisConnection.openPipeline();
+                    for (Map<String, String> map : maps) {
+                        map.forEach((key, value) -> {
+                            redisConnection.set(key.getBytes(), value.getBytes());
+                        });
+                    }
+                    //executePipelined方法会自动收尾，不要二次处理，直接返回null就行
+                    return null;
+                });
+            }
+            return resultList;
+        }, RedisPipelineThreadPool.getInstance());
     }
 }
