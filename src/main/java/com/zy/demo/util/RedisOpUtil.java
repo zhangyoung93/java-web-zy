@@ -4,11 +4,13 @@ import com.google.common.collect.Lists;
 import com.zy.demo.exception.BusinessException;
 import com.zy.demo.executor.RedisPipelineThreadPool;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisCallback;
+import org.apache.commons.collections4.MapUtils;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -99,27 +101,41 @@ public class RedisOpUtil {
     /**
      * redis管道异步写入
      *
-     * @param mapList mapList
+     * @param map map
      */
-    public void asyncPipelineSet(List<Map<String, String>> mapList) {
-        CompletableFuture.supplyAsync(() -> {
-            List<List<Map<String, String>>> lists = Lists.partition(mapList, 1000);
-            List<Object> resultList = null;
-            for (List<Map<String, String>> maps : lists) {
-                //每1000条数据用pipeline执行一次
-                resultList = this.redisTemplate.executePipelined((RedisCallback<Object>) redisConnection -> {
-                    //打开管道
-                    redisConnection.openPipeline();
-                    for (Map<String, String> map : maps) {
-                        map.forEach((key, value) -> {
-                            redisConnection.set(key.getBytes(), value.getBytes());
-                        });
+    public List<Object> asyncPipelineSet(Map<String, Object> map) throws Exception {
+        if (MapUtils.isEmpty(map)) {
+            throw new Exception("asyncPipelineSet fail,map=null");
+        }
+        //结果集
+        List<Object> resultList = new ArrayList<>();
+        CompletableFuture<Object> completableFuture = CompletableFuture.supplyAsync(() -> {
+            //批次结果集
+            List<Object> list;
+            List<String> keyList = Lists.newArrayList(map.keySet());
+            //每1000条数据用管道执行一次
+            List<List<String>> lists = Lists.partition(keyList, 1000);
+            for (List<String> subList : lists) {
+                list = this.redisTemplate.executePipelined(new SessionCallback<Object>() {
+                    @Override
+                    public Object execute(RedisOperations redisOperations) throws DataAccessException {
+                        RedisOperations<String, Object> ro = (RedisOperations<String, Object>) redisOperations;
+                        for (String key : subList) {
+                            if (key == null) {
+                                log.error("asyncPipelineSet fail,key=null");
+                                continue;
+                            }
+                            ro.opsForValue().set(key, map.get(key));
+                        }
+                        return null;
                     }
-                    //executePipelined方法会自动收尾，不要二次处理，直接返回null就行
-                    return null;
                 });
+                resultList.add(list);
             }
             return resultList;
         }, RedisPipelineThreadPool.getInstance());
+        //为了方便本地测试，主线程阻塞等待获取线程池执行结果。
+        completableFuture.get();
+        return resultList;
     }
 }
