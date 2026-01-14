@@ -5,13 +5,16 @@ package com.zy.demo.constant;
  * @author zy
  */
 public enum ResponseEnum {
+    /**
+     * 编码+描述
+     */
     SUCCESS("0000","成功！"),
     ERROR("1000","错误！"),
     EXCEPTION("2000","异常！");
 
-    private String code;
+    private final String code;
 
-    private String msg;
+    private final String msg;
 
     ResponseEnum(String code,String msg){
         this.code = code;

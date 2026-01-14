@@ -1,14 +1,18 @@
 package com.zy.demo.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import com.zy.demo.exception.BusinessException;
+import com.zy.demo.constant.RedisMqConstant;
 import com.zy.demo.executor.RedisPipelineThreadPool;
+import com.zy.demo.pojo.RedisMessageDto;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.stream.Record;
+import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SessionCallback;
+import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -28,15 +32,9 @@ public class RedisOpUtil {
         this.redisTemplate = redisTemplate;
     }
 
-    private void checkKey(String key) throws BusinessException {
-        if (key == null) {
-            throw new BusinessException("Redis操作异常！key不能为空");
-        }
-    }
-
     public boolean set(String key, Object value) {
         try {
-            checkKey(key);
+            Assert.notNull(key, "key must not be null!");
             this.redisTemplate.opsForValue().set(key, value);
             return true;
         } catch (Exception e) {
@@ -47,7 +45,7 @@ public class RedisOpUtil {
 
     public boolean set(String key, Object value, long timeout, TimeUnit timeUnit) {
         try {
-            checkKey(key);
+            Assert.notNull(key, "key must not be null!");
             this.redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
             return true;
         } catch (Exception e) {
@@ -59,7 +57,7 @@ public class RedisOpUtil {
     public Object getValue(String key) {
         Object object = null;
         try {
-            checkKey(key);
+            Assert.notNull(key, "key must not be null!");
             object = this.redisTemplate.opsForValue().get(key);
         } catch (Exception e) {
             log.error("Redis-set操作异常", e);
@@ -69,7 +67,7 @@ public class RedisOpUtil {
 
     public boolean hasKey(String key) {
         try {
-            checkKey(key);
+            Assert.notNull(key, "key must not be null!");
             this.redisTemplate.hasKey(key);
             return true;
         } catch (Exception e) {
@@ -81,7 +79,7 @@ public class RedisOpUtil {
     public Long incr(String key) {
         Long newValue = null;
         try {
-            checkKey(key);
+            Assert.notNull(key, "key must not be null!");
             newValue = this.redisTemplate.opsForValue().increment(key);
         } catch (Exception e) {
             log.error("Redis-exists操作异常", e);
@@ -91,7 +89,7 @@ public class RedisOpUtil {
 
     public void hSetAll(String key, Map<String, Object> map) {
         try {
-            checkKey(key);
+            Assert.notNull(key, "key must not be null!");
             this.redisTemplate.opsForHash().putAll(key, map);
         } catch (Exception e) {
             log.error("Redis-exists操作异常", e);
@@ -104,9 +102,7 @@ public class RedisOpUtil {
      * @param map map
      */
     public List<Object> asyncPipelineSet(Map<String, Object> map) throws Exception {
-        if (MapUtils.isEmpty(map)) {
-            throw new Exception("asyncPipelineSet fail,map=null");
-        }
+        Assert.notEmpty(map, "map must not be null!");
         //结果集
         List<Object> resultList = new ArrayList<>();
         CompletableFuture<Object> completableFuture = CompletableFuture.supplyAsync(() -> {
@@ -137,5 +133,19 @@ public class RedisOpUtil {
         //为了方便本地测试，主线程阻塞等待获取线程池执行结果。
         completableFuture.get();
         return resultList;
+    }
+
+    /**
+     * 生产消息
+     */
+    public void sendMessage(RedisMessageDto redisMessageDto) {
+        Assert.notNull(redisMessageDto, "redisMessageDto must not be null!");
+        Date date = new Date();
+        redisMessageDto.setOpTime(date);
+        ObjectMapper objectMapper = new ObjectMapper();
+        //如果直接传参实体类会导致无法序列化，改为map
+        Map<String, Object> dataMap = (Map<String, Object>) objectMapper.convertValue(redisMessageDto, Map.class);
+        Record<String, Map<String, Object>> record = StreamRecords.newRecord().in(RedisMqConstant.STREAM_KEY).ofMap(dataMap);
+        this.redisTemplate.opsForStream().add(record);
     }
 }
