@@ -109,8 +109,8 @@ public class RedisOpUtil {
             //批次结果集
             List<Object> list;
             List<String> keyList = Lists.newArrayList(map.keySet());
-            //每1000条数据用管道执行一次
-            List<List<String>> lists = Lists.partition(keyList, 1000);
+            //每100条数据用管道执行一次（建议值）
+            List<List<String>> lists = Lists.partition(keyList, 100);
             for (List<String> subList : lists) {
                 list = this.redisTemplate.executePipelined(new SessionCallback<Object>() {
                     @Override
@@ -147,5 +147,34 @@ public class RedisOpUtil {
         Map<String, Object> dataMap = (Map<String, Object>) objectMapper.convertValue(redisMessageDto, Map.class);
         Record<String, Map<String, Object>> record = StreamRecords.newRecord().in(RedisMqConstant.STREAM_KEY).ofMap(dataMap);
         this.redisTemplate.opsForStream().add(record);
+    }
+
+    /**
+     * redis事务
+     *
+     * @return List<Object>
+     */
+    public List<Object> transactionLock(String lockKey) {
+        //初始化lockKey，用于测试
+        this.redisTemplate.opsForValue().set(lockKey, "0");
+        List<Object> resultList = this.redisTemplate.execute(new SessionCallback<List<Object>>() {
+            @Override
+            public List<Object> execute(RedisOperations redisOperations) throws DataAccessException {
+                RedisOperations<String, Object> ro = (RedisOperations<String, Object>) redisOperations;
+                //乐观锁。监听lock键
+                ro.watch(lockKey);
+                //开启事务
+                ro.multi();
+                //另一个线程修改lockKey的值
+                //当前线程命令入队，
+                ro.opsForValue().set(lockKey, "-1");
+//                //取消事务
+//                ro.discard();
+                //提交事务，由于另一个线程修改，导致set无效。lockKey的值并不是-1。
+                return ro.exec();
+            }
+        });
+        log.info("transactionSet,resultList={}", resultList);
+        return resultList;
     }
 }
