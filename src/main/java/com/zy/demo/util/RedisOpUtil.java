@@ -2,7 +2,7 @@ package com.zy.demo.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import com.zy.demo.constant.RedisMqConstant;
+import com.zy.demo.constant.RedisConstant;
 import com.zy.demo.executor.RedisPipelineThreadPool;
 import com.zy.demo.pojo.RedisMessageDto;
 import lombok.extern.slf4j.Slf4j;
@@ -145,8 +145,19 @@ public class RedisOpUtil {
         ObjectMapper objectMapper = new ObjectMapper();
         //如果直接传参实体类会导致无法序列化，改为map
         Map<String, Object> dataMap = (Map<String, Object>) objectMapper.convertValue(redisMessageDto, Map.class);
-        Record<String, Map<String, Object>> record = StreamRecords.newRecord().in(RedisMqConstant.STREAM_KEY).ofMap(dataMap);
+        Record<String, Map<String, Object>> record = StreamRecords.newRecord().in(RedisConstant.STREAM_KEY).ofMap(dataMap);
         this.redisTemplate.opsForStream().add(record);
+    }
+
+    /**
+     * 发布消息
+     *
+     * @param channelName     channelName
+     * @param redisMessageDto redisMessageDto
+     */
+    public void publishMessage(String channelName, RedisMessageDto redisMessageDto) {
+        this.redisTemplate.convertAndSend(channelName, redisMessageDto);
+        log.info("publishMessage=====>channelName={},message={}", channelName, redisMessageDto);
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.zy.demo.pojo;
 
+import org.springframework.util.Assert;
+
 import java.util.Date;
 
 /**
@@ -17,15 +19,15 @@ public class RedisMessageDto {
 
     private Date opTime;
 
-    public RedisMessageDto() {
+    private RedisMessageDto() {
 
     }
 
-    public RedisMessageDto(Long bizId, int bizType, String bizContent, Date opTime) {
-        this.bizId = bizId;
-        this.bizType = bizType;
-        this.bizContent = bizContent;
-        this.opTime = opTime;
+    private RedisMessageDto(Builder builder) {
+        this.bizId = builder.bizId;
+        this.bizType = builder.bizType;
+        this.bizContent = builder.bizContent;
+        this.opTime = builder.opTime;
     }
 
     public Long getBizId() {
@@ -60,7 +62,6 @@ public class RedisMessageDto {
         this.opTime = opTime;
     }
 
-
     @Override
     public String toString() {
         return "RedisMessageDto{" +
@@ -69,5 +70,53 @@ public class RedisMessageDto {
                 ", bizContent='" + bizContent + '\'' +
                 ", opTime=" + opTime +
                 '}';
+    }
+
+    /**
+     * 建造者
+     */
+    public static class Builder {
+
+        private Long bizId;
+
+        private int bizType;
+
+        private String bizContent;
+
+        private Date opTime = new Date();
+
+        public Builder bizId(Long bizId) {
+            this.bizId = bizId;
+            return this;
+        }
+
+        public Builder bizType(int bizType) {
+            this.bizType = bizType;
+            return this;
+        }
+
+        public Builder opTime(Date opTime) {
+            this.opTime = opTime;
+            return this;
+        }
+
+        public Builder bizContent(String bizContent) {
+            this.bizContent = bizContent;
+            return this;
+        }
+
+        public RedisMessageDto build() {
+            Assert.notNull(this.bizId, "bizId must not be null!");
+            return new RedisMessageDto(this);
+        }
+    }
+
+    /**
+     * 对外只提供建造者
+     *
+     * @return Builder
+     */
+    public static Builder builder() {
+        return new Builder();
     }
 }

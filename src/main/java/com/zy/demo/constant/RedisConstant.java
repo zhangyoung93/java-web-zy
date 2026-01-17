@@ -1,10 +1,11 @@
 package com.zy.demo.constant;
 
 /**
- * REDIS MQ 常量
+ * REDIS 常量
+ *
  * @author zy
  */
-public class RedisMqConstant {
+public class RedisConstant {
 
     /**
      * STREAM_KEY
@@ -53,4 +54,10 @@ public class RedisMqConstant {
     public static final String STREAM_FAIL_VALUE = "value";
     public static final String STREAM_FAIL_TIME = "time";
     public static final String STREAM_FAIL_STATUS = "status";
+
+    /**
+     * 发布订阅主题
+     */
+    public static final String CHANNEL_TOPIC = "channel-topic-zy";
+    public static final String PATTERN_TOPIC = "pattern-topic-zy:*";
 }

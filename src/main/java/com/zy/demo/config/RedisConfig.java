@@ -3,12 +3,16 @@ package com.zy.demo.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.zy.demo.constant.RedisConstant;
+import com.zy.demo.listener.RedisMessageListener;
 import com.zy.demo.util.RedisOpUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.PatternTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -47,12 +51,6 @@ public class RedisConfig {
             JsonAutoDetect.Visibility.ANY表示序列化任何访问权限的属性，包含private。
          */
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        /*
-            处理反序列化class信息丢失问题。
-            LaissezFaireSubTypeValidator.instance表示不限制反序列化的class类型。
-            ObjectMapper.DefaultTyping.NON_FINAL表示非final修饰的类能写入class信息。
-         */
-        objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
         //把自定义objectMapper绑定到JSON序列化类
         jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
         //最后设置value的序列化器
@@ -75,5 +73,23 @@ public class RedisConfig {
     @Bean
     public RedisOpUtil redisOpUtil(RedisTemplate<String, Object> redisTemplate) {
         return new RedisOpUtil(redisTemplate);
+    }
+
+    /**
+     * redis消息监听器bean
+     *
+     * @param redisConnectionFactory redisConnectionFactory
+     * @param redisMessageListener   redisMessageListener
+     * @return RedisMessageListenerContainer
+     */
+    @Bean
+    public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory, RedisMessageListener redisMessageListener) {
+        RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
+        redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
+        //注册channel主题
+        redisMessageListenerContainer.addMessageListener(redisMessageListener, new ChannelTopic(RedisConstant.CHANNEL_TOPIC));
+        //注册pattern主题
+        redisMessageListenerContainer.addMessageListener(redisMessageListener, new PatternTopic(RedisConstant.PATTERN_TOPIC));
+        return redisMessageListenerContainer;
     }
 }
