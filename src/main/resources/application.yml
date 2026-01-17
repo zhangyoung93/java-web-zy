@@ -1,18 +1,110 @@
 server:
   port: 8082
+  servlet:
+    #应用上下文路径
+    context-path: /zy
+    #会话
+    session:
+      #超时时间(单位：秒)。默认1800秒
+      timeout: 3600
+      cookie:
+        #是否只有http请求能读写cookie。默认false。开启后可禁止JS读写cookie，更安全。
+        http-only: true
+        #安全性。默认false。指只有HTTPS传输cookie，需先配置HTTPS。
+        secure: true
+    #编码
+    encoding:
+      #开启编码配置。默认true
+      enabled: true
+      #字符集。默认UTF-8
+      charset: UTF-8
+      #强制所有请求/响应都使用charset编码，即UTF-8。默认true
+      force: true
+  #最大HTTP请求头大小
+  max-http-header-size: 16KB
+  #压缩配置
+  compression:
+    #开启压缩。默认false
+    enabled: true
+    #响应内容类型。默认"text/html", "text/xml", "text/plain", "text/css", "text/javascript", "application/javascript", "application/json", "application/xml"
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json,application/xml
+    #最小响应大小。默认2KB。指响应内容大小超过2KB才会压缩。
+    min-response-size: 2KB
+  tomcat:
+    #线程池配置
+    threads:
+      #最大线程数。默认200
+      max: 200
+    #最大连接数。默认8192
+    max-connections: 8192
+    #连接超时的时间（单位毫秒）。默认20000
+    connection-timeout: 30000
+    #HTTP-POST请求体最大数据量。默认2MB
+    max-http-form-post-size: 10MB
+    #URI编码，默认UTF-8
+    uri-encoding: UTF-8
+    #访问日志
+    accesslog:
+      #是否打开。默认是false
+      enabled: true
+      #日志存储目录。默认logs。
+      directory: logs
+      #文件前缀。默认access_log
+      prefix: access_log
+      #文件类型。默认.log
+      suffix: .log
+      #文件内容格式。默认common，可添加%D显示耗时
+      pattern: common
+      #是否开启文件轮换，即自动分割多个文件。默认true
+      rotate: true
+
+  #SSL/TLS。生产环境在网关配置，不在应用配置。
+  ssl:
+    #开启SSL/TLS。默认true。本地开发关闭。
+    enabled: false
+    #证书路径。
+    key-store: classpath:ssl/
+    #证书密码
+    key-store-password: xxx
+    #证书类型
+    key-store-type: PKCS12
+    #证书中的密钥名称
+    key-alias: zy
+    #协议类型。默认TLS
+    protocol: TLS
+    #允许的协议版本。主流是1.2版本，JDK11+用1.3版本
+    enabled-protocols: TLSv1.2
 spring:
   application:
     name: java-web-zy
+  profiles:
+    active: dev
+  main:
+    #延迟初始化bean。默认false，提前暴露bean依赖问题。设置为true会加快应用启动速度。
+    lazy-initialization: false
   aop:
     #Spring动态代理方式：springboot2.X后默认是CGLIB(true)
     proxy-target-class: true
+  #jackson配置
+  jackson:
+    #序列化
+    serialization:
+      #将date、Calendar时间类型转换为long型时间戳。默认true。不包含jdk8新增的Time类型。
+      write-dates-as-timestamps: true
+  servlet:
+    #文件上传
+    multipart:
+      #开启配置。默认true
+      enabled: true
+      #单个文件最大值。默认1MB
+      max-file-size: 10MB
   datasource:
     #集成druid连接池
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/zy?characterEncoding=utf8&useOldAliasMetadataBehavior=true&autoReconnect=true&useSSL=false&serverTimezone=UTC
-    username: ENC(k5IohO2XLuAhwRbqdoQXc1Ab09Of3yQF)
-    password: ENC(k5IohO2XLuAhwRbqdoQXc1Ab09Of3yQF)
+#    url: jdbc:mysql://localhost:3306/zy?characterEncoding=utf8&useOldAliasMetadataBehavior=true&autoReconnect=true&useSSL=false&serverTimezone=UTC
+#    username: ENC(k5IohO2XLuAhwRbqdoQXc1Ab09Of3yQF)
+#    password: ENC(k5IohO2XLuAhwRbqdoQXc1Ab09Of3yQF)
     druid:
       # 初始化连接数（默认0，建议5-10）
       initial-size: 5
@@ -51,7 +143,7 @@ spring:
     #单机模式
     #host: localhost
     #port: 6379
-    password: ENC(TUjeJQU0g3pGZqbYlDw8mHilUTdV+M1XlYZGeBc7WYg=)
+#    password: ENC(TUjeJQU0g3pGZqbYlDw8mHilUTdV+M1XlYZGeBc7WYg=)
     #数据库索引
     database: 0
     #建立连接和数据操作超时时间，单位毫秒
@@ -69,23 +161,42 @@ spring:
         min-idle: 1
         #客户端获取连接的最大等待时间
         max-wait: 10000ms
-    #哨兵模式（读写分离）
-    sentinel:
-      #主节点名称
-      master: mymaster
-      #所有节点列表
-      nodes: 127.0.0.1:26379,127.0.0.1:26380,127.0.0.1:26381
-      #主从节点互相认证的密码，保持一致
-      password: ENC(TUjeJQU0g3pGZqbYlDw8mHilUTdV+M1XlYZGeBc7WYg=)
-#    #集群模式（分片存储）
+    #哨兵模式
+#    sentinel:
+#      #主节点名称
+#      master: mymaster
+#      #所有节点列表
+#      nodes: 127.0.0.1:26379,127.0.0.1:26380,127.0.0.1:26381
+#      #主从节点互相认证的密码，保持一致
+#      password: ENC(TUjeJQU0g3pGZqbYlDw8mHilUTdV+M1XlYZGeBc7WYg=)
+#    #集群模式
 #    cluster:
 #      #所有节点列表
 #      nodes: localhost:6379
 #      #最大重定向其它节点的次数，防止死循环
 #      max-redirects: 3
 
+#actuator
+management:
+  endpoints:
+    #禁止访问所有结点
+    enabled-by-default: false
+    web:
+      #修改默认的访问路径
+      base-path: /actuator/monitor
+  endpoint:
+    #打开health结点，为k8s、docker等容器化技术提供探针
+    health:
+      enabled: true
+    metrics:
+      enabled: true
+  health:
+    ldap:
+      enabled: false
+
 #mybatis
 mybatis:
+  #mapper文件路径
   mapper-locations: classpath:mapper/mysql/*.xml
   configuration:
     #开启延迟加载（关联查询提高性能）,默认关闭
@@ -107,6 +218,39 @@ pagehelper:
   reasonable: true
   # 支持通过 Mapper 参数传递分页参数
   support-methods-arguments: true
+
+#swagger
+swagger:
+  #开启swagger。默认false。生产环境设置false。
+  enabled: false
+  base-package: com.zy.demo
+  title: JavaWebDemoApi
+  description: Api for JavaWebDemo
+  contact:
+    name: zy
+    email: 111111111@qq.com
+  host: 127.0.0.1
+
+#日志
+logging:
+  #  config: classpath:log4j2-base.xml
+  file:
+    name: java-web-zy.log
+  level:
+    #打印SQL日志
+    com.zy.demo.dao: DEBUG
+    #打印redis日志
+    org.springframework.data.redis: WARN
+
+#jasypt
+jasypt:
+  encryptor:
+    #密钥（生产环境要隐藏，换成其它方式）
+    password: zySecret
+    #加密算法（默认PBEWITHHMACSHA512ANDAES_256，需要验证兼容性）
+    algorithm: PBEWithMD5AndDES
+    #向量生成类（确保相同的明文加密后生成不同的密文，增强安全性），默认随机生成。
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
 
 #mybatis-plus
 #mybatis-plus:
@@ -139,34 +283,3 @@ pagehelper:
 #      logic-not-delete-value: 0
 #    # 打印mybatis-plus启动logo横幅（默认true）
 #    banner: true
-
-#swagger
-swagger:
-  enabled: true
-  base-package: com.zy.demo
-  title: JavaWebDemoApi
-  description: Api for JavaWebDemo
-  contact:
-    name: zy
-    email: 414211111@qq.com
-  host: 10.1.1.1
-
-#logback
-logging:
-  file:
-    name: java-web-zy.log
-  level:
-    #打印SQL日志
-    com.zy.demo.dao: DEBUG
-    #打印redis日志
-    org.springframework.data.redis: WARN
-
-#jasypt
-jasypt:
-  encryptor:
-    #密钥（生产环境要隐藏，换成其它方式）
-    password: zySecret
-    #加密算法（默认PBEWITHHMACSHA512ANDAES_256，需要验证兼容性）
-    algorithm: PBEWithMD5AndDES
-    #初始化向量生成类（确保相同的明文加密后生成不同的密文，增强安全性），默认随机生成。
-    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
