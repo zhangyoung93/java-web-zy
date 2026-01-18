@@ -60,4 +60,9 @@ public class RedisConstant {
      */
     public static final String CHANNEL_TOPIC = "channel-topic-zy";
     public static final String PATTERN_TOPIC = "pattern-topic-zy:*";
+
+    /**
+     * 支付业务锁
+     */
+    public static final String BIZ_PAY_LOCK_KEY = "biz:pay:lock:";
 }

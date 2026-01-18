@@ -6,7 +6,12 @@ import com.zy.demo.constant.RedisConstant;
 import com.zy.demo.executor.RedisPipelineThreadPool;
 import com.zy.demo.pojo.RedisMessageDto;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.stream.ObjectRecord;
+import org.springframework.data.redis.connection.stream.ReadOffset;
 import org.springframework.data.redis.connection.stream.Record;
 import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.core.RedisOperations;
@@ -28,13 +33,20 @@ public class RedisOpUtil {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public RedisOpUtil(RedisTemplate<String, Object> redisTemplate) {
+    private final RedissonClient redissonClient;
+
+    public RedisOpUtil(RedisTemplate<String, Object> redisTemplate, RedissonClient redissonClient) {
         this.redisTemplate = redisTemplate;
+        this.redissonClient = redissonClient;
+    }
+
+    public RedisConnectionFactory getConnectionFactory() {
+        return this.redisTemplate.getConnectionFactory();
     }
 
     public boolean set(String key, Object value) {
+        Assert.hasText(key, "key must not be empty!");
         try {
-            Assert.notNull(key, "key must not be null!");
             this.redisTemplate.opsForValue().set(key, value);
             return true;
         } catch (Exception e) {
@@ -44,8 +56,8 @@ public class RedisOpUtil {
     }
 
     public boolean set(String key, Object value, long timeout, TimeUnit timeUnit) {
+        Assert.hasText(key, "key must not be empty!");
         try {
-            Assert.notNull(key, "key must not be null!");
             this.redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
             return true;
         } catch (Exception e) {
@@ -55,9 +67,9 @@ public class RedisOpUtil {
     }
 
     public Object getValue(String key) {
+        Assert.hasText(key, "key must not be empty!");
         Object object = null;
         try {
-            Assert.notNull(key, "key must not be null!");
             object = this.redisTemplate.opsForValue().get(key);
         } catch (Exception e) {
             log.error("Redis-set操作异常", e);
@@ -66,9 +78,9 @@ public class RedisOpUtil {
     }
 
     public boolean hasKey(String key) {
+        Assert.hasText(key, "key must not be empty!");
         Boolean hasKey = false;
         try {
-            Assert.notNull(key, "key must not be null!");
             hasKey = this.redisTemplate.hasKey(key);
         } catch (Exception e) {
             log.error("Redis-exists操作异常", e);
@@ -77,9 +89,9 @@ public class RedisOpUtil {
     }
 
     public Long incr(String key) {
+        Assert.hasText(key, "key must not be empty!");
         Long newValue = null;
         try {
-            Assert.notNull(key, "key must not be null!");
             newValue = this.redisTemplate.opsForValue().increment(key);
         } catch (Exception e) {
             log.error("Redis-exists操作异常", e);
@@ -88,8 +100,8 @@ public class RedisOpUtil {
     }
 
     public void hSetAll(String key, Map<String, Object> map) {
+        Assert.hasText(key, "key must not be empty!");
         try {
-            Assert.notNull(key, "key must not be null!");
             this.redisTemplate.opsForHash().putAll(key, map);
         } catch (Exception e) {
             log.error("Redis-exists操作异常", e);
@@ -156,8 +168,38 @@ public class RedisOpUtil {
      * @param redisMessageDto redisMessageDto
      */
     public void publishMessage(String channelName, RedisMessageDto redisMessageDto) {
+        Assert.hasText(channelName, "channelName must not be empty!");
+        Assert.notNull(redisMessageDto, "redisMessageDto must not be empty!");
         this.redisTemplate.convertAndSend(channelName, redisMessageDto);
-        log.info("publishMessage=====>channelName={},message={}", channelName, redisMessageDto);
+        log.info("publishMessage,channelName={},message={}", channelName, redisMessageDto);
+    }
+
+    /**
+     * 创建Stream组
+     *
+     * @param key    stream key
+     * @param group  stream group
+     * @param offset 数据消费偏移量
+     */
+    public void createStreamGroup(String key, String group, String offset) {
+        Assert.hasText(key, "key must not be empty!");
+        Assert.hasText(group, "group must not be empty!");
+        Assert.hasText(offset, "offset must not be empty!");
+        this.redisTemplate.opsForStream().createGroup(key, ReadOffset.from(offset), group);
+        log.info("createStreamGroup,key={},group={},offset{}", key, group, offset);
+    }
+
+    /**
+     * 消息确认
+     *
+     * @param group   组
+     * @param message 消息类
+     */
+    public void streamAck(String group, ObjectRecord<String, String> message) {
+        Assert.hasText(group, "group must not be empty!");
+        Assert.notNull(message, "message must not be null!");
+        this.redisTemplate.opsForStream().acknowledge(group, message);
+        log.info("streamAck,group={},message{}", group, message);
     }
 
     /**
@@ -166,6 +208,7 @@ public class RedisOpUtil {
      * @return List<Object>
      */
     public List<Object> transactionLock(String lockKey) {
+        Assert.hasText(lockKey, "lockKey must not be empty!");
         //初始化lockKey，用于测试
         this.redisTemplate.opsForValue().set(lockKey, "0");
         List<Object> resultList = this.redisTemplate.execute(new SessionCallback<List<Object>>() {
@@ -187,5 +230,69 @@ public class RedisOpUtil {
         });
         log.info("transactionSet,resultList={}", resultList);
         return resultList;
+    }
+
+    /**
+     * 分布式环境获取锁(阻塞，自动续期）
+     *
+     * @param lockKey 锁key
+     */
+    public void lock(String lockKey) {
+        Assert.hasText(lockKey, "lockKey must not be empty!");
+        RLock rLock = this.redissonClient.getLock(lockKey);
+        rLock.lock();
+    }
+
+    /**
+     * 分布式环境获取锁(阻塞，不能自动续期）
+     *
+     * @param lockKey  锁key
+     * @param timeout  锁的超时时间
+     * @param timeUnit 时间单位
+     */
+    public void lock(String lockKey, long timeout, TimeUnit timeUnit) {
+        Assert.hasText(lockKey, "lockKey must not be empty!");
+        RLock rLock = this.redissonClient.getLock(lockKey);
+        rLock.lock(timeout, timeUnit);
+    }
+
+    /**
+     * 分布式环境尝试获取锁（非阻塞）
+     *
+     * @param lockKey  锁key
+     * @param waitTime 获取锁的等待时间
+     * @param timeout  锁的超时时间。timeout=-1时开启自动续期
+     * @param timeUnit 时间单位
+     * @return 是否获取到锁
+     * @throws InterruptedException InterruptedException
+     */
+    public boolean tryLock(String lockKey, long waitTime, long timeout, TimeUnit timeUnit) throws InterruptedException {
+        Assert.hasText(lockKey, "lockKey must not be empty!");
+        boolean hasLock;
+        RLock rLock = this.redissonClient.getLock(lockKey);
+        if (timeout < 0) {
+            //如果锁的超时时间小于0，则是自动续期的锁
+            hasLock = rLock.tryLock(waitTime, timeUnit);
+        } else {
+            //有超时时间的锁
+            hasLock = rLock.tryLock(waitTime, timeout, timeUnit);
+        }
+        //模拟测试自动续期
+//        Thread.sleep(60000L);
+        return hasLock;
+    }
+
+    /**
+     * 分布式环境释放锁
+     *
+     * @param lockKey 锁key
+     */
+    public void unlock(String lockKey) {
+        Assert.hasText(lockKey, "lockKey must not be empty!");
+        RLock rLock = this.redissonClient.getLock(lockKey);
+        //只有拿到锁的线程才能释放锁
+        if (rLock.isHeldByCurrentThread()) {
+            rLock.unlock();
+        }
     }
 }

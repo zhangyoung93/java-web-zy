@@ -79,12 +79,13 @@ public class RedisConfig {
     /**
      * redis操作工具类交给IOC管理，并注入上边自定义的redisTemplate
      *
-     * @param redisTemplate redisTemplate
+     * @param redisTemplate  redisTemplate
+     * @param redissonClient redissonClient
      * @return RedisOpUtil
      */
     @Bean
-    public RedisOpUtil redisOpUtil(RedisTemplate<String, Object> redisTemplate) {
-        return new RedisOpUtil(redisTemplate);
+    public RedisOpUtil redisOpUtil(RedisTemplate<String, Object> redisTemplate, RedissonClient redissonClient) {
+        return new RedisOpUtil(redisTemplate, redissonClient);
     }
 
     /**
@@ -143,6 +144,8 @@ public class RedisConfig {
             default:
                 throw new Exception("redisMode错误");
         }
+        //锁自动续期的时间，默认30000毫秒。
+        config.setLockWatchdogTimeout(10000L);
         return Redisson.create(config);
     }
 }

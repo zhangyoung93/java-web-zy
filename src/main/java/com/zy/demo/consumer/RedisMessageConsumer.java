@@ -1,10 +1,9 @@
-package com.zy.demo.Consumer;
+package com.zy.demo.consumer;
 
 import com.zy.demo.constant.RedisConstant;
 import com.zy.demo.util.RedisOpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.stream.*;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.stereotype.Component;
 
@@ -23,12 +22,9 @@ import java.util.Objects;
 @Component
 public class RedisMessageConsumer {
 
-    private final RedisTemplate<String, Object> redisTemplate;
-
     private final RedisOpUtil redisOpUtil;
 
-    public RedisMessageConsumer(RedisTemplate<String, Object> redisTemplate, RedisOpUtil redisOpUtil) {
-        this.redisTemplate = redisTemplate;
+    public RedisMessageConsumer(RedisOpUtil redisOpUtil) {
         this.redisOpUtil = redisOpUtil;
     }
 
@@ -36,14 +32,14 @@ public class RedisMessageConsumer {
     public void init() {
         //创建消费者组
         if (!this.redisOpUtil.hasKey(RedisConstant.STREAM_KEY)) {
-            this.redisTemplate.opsForStream().createGroup(RedisConstant.STREAM_KEY, ReadOffset.from(RedisConstant.OFFSET_ALL), RedisConstant.CONSUMER_GROUP);
+            this.redisOpUtil.createStreamGroup(RedisConstant.STREAM_KEY, RedisConstant.CONSUMER_GROUP, RedisConstant.OFFSET_ALL);
         }
         //创建监听器配置类
         StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, ObjectRecord<String, String>> options = StreamMessageListenerContainer.StreamMessageListenerContainerOptions
                 .builder().batchSize(RedisConstant.BATCH_SIZE).pollTimeout(Duration.ofMillis(RedisConstant.POLL_TIMEOUT)).targetType(String.class).build();
 
         //创建监听器
-        StreamMessageListenerContainer<String, ObjectRecord<String, String>> container = StreamMessageListenerContainer.create(Objects.requireNonNull(this.redisTemplate.getConnectionFactory()), options);
+        StreamMessageListenerContainer<String, ObjectRecord<String, String>> container = StreamMessageListenerContainer.create(Objects.requireNonNull(this.redisOpUtil.getConnectionFactory()), options);
 
         //监听器接收消息
         container.receive(
@@ -55,17 +51,17 @@ public class RedisMessageConsumer {
                         //消费消息
                         handleMessage(message);
                         //确认消息已消费
-                        this.redisTemplate.opsForStream().acknowledge(RedisConstant.CONSUMER_GROUP, message);
+                        this.redisOpUtil.streamAck(RedisConstant.CONSUMER_GROUP, message);
                     } catch (Exception e) {
                         log.error("consume msg fail,save the fail message", e);
                         //记录死信数据
-                        Map<String, String> map = new HashMap<>(8);
+                        Map<String, Object> map = new HashMap<>(8);
                         map.put(RedisConstant.STREAM_FAIL_ID, String.valueOf(message.getId()));
                         map.put(RedisConstant.STREAM_FAIL_VALUE, message.getValue());
                         map.put(RedisConstant.STREAM_FAIL_TIME, String.valueOf(System.currentTimeMillis()));
                         map.put(RedisConstant.STREAM_FAIL_STATUS, "-1");
                         String redisKey = RedisConstant.STREAM_FAIL_KEY + message.getId();
-                        this.redisTemplate.opsForHash().putAll(redisKey, map);
+                        this.redisOpUtil.hSetAll(redisKey, map);
                     }
                 }
         );
