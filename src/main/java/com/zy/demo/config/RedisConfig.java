@@ -6,6 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zy.demo.constant.RedisConstant;
 import com.zy.demo.listener.RedisMessageListener;
 import com.zy.demo.util.RedisOpUtil;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -15,6 +21,9 @@ import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.util.Assert;
+
+import java.util.List;
 
 /**
  * redis配置类
@@ -23,6 +32,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  */
 @Configuration
 public class RedisConfig {
+
+    @Value("${redisson.mode:single}")
+    private String redisMode;
 
     /**
      * 配置redisTemplate
@@ -91,5 +103,46 @@ public class RedisConfig {
         //注册pattern主题
         redisMessageListenerContainer.addMessageListener(redisMessageListener, new PatternTopic(RedisConstant.PATTERN_TOPIC));
         return redisMessageListenerContainer;
+    }
+
+    /**
+     * RedissonClient
+     *
+     * @param redisProperties redisProperties
+     * @return RedissonClient
+     * @throws Exception Exception
+     */
+    @ConditionalOnProperty(prefix = "redisson", name = "enable", havingValue = "true")
+    @Bean(destroyMethod = "shutdown")
+    public RedissonClient redissonClient(RedisProperties redisProperties) throws Exception {
+        Config config = new Config();
+        List<String> nodeList;
+        String[] nodes;
+        switch (this.redisMode) {
+            case "single":
+                config.useSingleServer().setAddress(redisProperties.getUrl())
+                        .setPassword(redisProperties.getPassword())
+                        .setDatabase(redisProperties.getDatabase());
+                break;
+            case "sentinel":
+                nodeList = redisProperties.getSentinel().getNodes();
+                Assert.notEmpty(nodeList, "redis sentinel mode,nodes must not be null!");
+                nodes = nodeList.stream().map(node -> "redis://" + node).toArray(String[]::new);
+                config.useSentinelServers().addSentinelAddress(nodes)
+                        .setMasterName(redisProperties.getSentinel().getMaster())
+                        .setPassword(redisProperties.getPassword())
+                        .setDatabase(redisProperties.getDatabase());
+                break;
+            case "cluster":
+                nodeList = redisProperties.getCluster().getNodes();
+                Assert.notEmpty(nodeList, "redis cluster mode,nodes must not be null!");
+                nodes = nodeList.stream().map(node -> "redis://" + node).toArray(String[]::new);
+                config.useClusterServers().addNodeAddress(nodes)
+                        .setPassword(redisProperties.getPassword());
+                break;
+            default:
+                throw new Exception("redisMode错误");
+        }
+        return Redisson.create(config);
     }
 }

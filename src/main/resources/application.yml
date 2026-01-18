@@ -10,7 +10,7 @@ server:
       cookie:
         #是否只有http请求能读写cookie。默认false。开启后可禁止JS读写cookie，更安全。
         http-only: true
-        #安全性。默认false。指只有HTTPS传输cookie，需先配置HTTPS。
+        #安全性。默认false。true指只有HTTPS传输cookie，需先配置HTTPS。
         secure: true
     #编码
     encoding:
@@ -82,6 +82,9 @@ spring:
   main:
     #延迟初始化bean。默认false，提前暴露bean依赖问题。设置为true会加快应用启动速度。
     lazy-initialization: false
+  autoconfigure:
+    #排除的自动配置类，或通过自定义配置类手动注册bean
+    exclude: org.redisson.spring.starter.RedissonAutoConfiguration
   aop:
     #Spring动态代理方式：springboot2.X后默认是CGLIB(true)
     proxy-target-class: true
@@ -89,7 +92,7 @@ spring:
   jackson:
     #序列化
     serialization:
-      #将date、Calendar时间类型转换为long型时间戳。默认true。不包含jdk8新增的Time类型。
+      #将date、Calendar时间类型转换为long型时间戳。默认true。不包含jdk1.8新增的Time类型。
       write-dates-as-timestamps: true
   servlet:
     #文件上传
@@ -140,9 +143,8 @@ spring:
       async-init: true
   #redis配置
   redis:
-    #单机模式
-    #host: localhost
-    #port: 6379
+#    #单机模式
+#    url: redis://localhost:6379
 #    password: ENC(TUjeJQU0g3pGZqbYlDw8mHilUTdV+M1XlYZGeBc7WYg=)
     #数据库索引
     database: 0

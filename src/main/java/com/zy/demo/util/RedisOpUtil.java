@@ -66,14 +66,14 @@ public class RedisOpUtil {
     }
 
     public boolean hasKey(String key) {
+        Boolean hasKey = false;
         try {
             Assert.notNull(key, "key must not be null!");
-            this.redisTemplate.hasKey(key);
-            return true;
+            hasKey = this.redisTemplate.hasKey(key);
         } catch (Exception e) {
             log.error("Redis-exists操作异常", e);
         }
-        return false;
+        return Optional.ofNullable(hasKey).orElse(false);
     }
 
     public Long incr(String key) {
@@ -136,7 +136,7 @@ public class RedisOpUtil {
     }
 
     /**
-     * 生产消息
+     * 生产消息（一对一）
      */
     public void sendMessage(RedisMessageDto redisMessageDto) {
         Assert.notNull(redisMessageDto, "redisMessageDto must not be null!");
@@ -150,7 +150,7 @@ public class RedisOpUtil {
     }
 
     /**
-     * 发布消息
+     * 发布消息（一对多）
      *
      * @param channelName     channelName
      * @param redisMessageDto redisMessageDto

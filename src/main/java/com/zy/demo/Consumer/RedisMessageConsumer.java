@@ -1,6 +1,7 @@
 package com.zy.demo.Consumer;
 
 import com.zy.demo.constant.RedisConstant;
+import com.zy.demo.util.RedisOpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,15 +25,17 @@ public class RedisMessageConsumer {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public RedisMessageConsumer(RedisTemplate<String, Object> redisTemplate) {
+    private final RedisOpUtil redisOpUtil;
+
+    public RedisMessageConsumer(RedisTemplate<String, Object> redisTemplate, RedisOpUtil redisOpUtil) {
         this.redisTemplate = redisTemplate;
+        this.redisOpUtil = redisOpUtil;
     }
 
     @PostConstruct
     public void init() {
         //创建消费者组
-        StreamInfo.XInfoGroups xInfoGroups = this.redisTemplate.opsForStream().groups(RedisConstant.STREAM_KEY);
-        if (xInfoGroups.isEmpty()) {
+        if (!this.redisOpUtil.hasKey(RedisConstant.STREAM_KEY)) {
             this.redisTemplate.opsForStream().createGroup(RedisConstant.STREAM_KEY, ReadOffset.from(RedisConstant.OFFSET_ALL), RedisConstant.CONSUMER_GROUP);
         }
         //创建监听器配置类

@@ -6,8 +6,7 @@ spring:
   #redis配置
   redis:
     #单机模式
-    #host: localhost
-    #port: 6379
+    url: redis://localhost:6379
     password: ENC(TUjeJQU0g3pGZqbYlDw8mHilUTdV+M1XlYZGeBc7WYg=)
     timeout: 100000ms
     #哨兵模式
@@ -24,6 +23,12 @@ spring:
 #      nodes: localhost:6379
 #      #最大重定向其它节点的次数，防止死循环
 #      max-redirects: 3
+
+redisson:
+  #是否手动注册redisson bean
+  enable: true
+  #redisson的模式（single/sentinel/cluster）
+  mode: single
 
 #/swagger-ui.html
 swagger:
