@@ -1,0 +1,11 @@
+#  cloud:
+#    nacos:
+#      config:
+#        enabled: ${NACOS_ENABLED:false}
+#        namespace: ${NACOS_NAMESPACE:}
+#        file-extension: yml
+#        server-addr: ${NACOS_ADDR:localhost:8848}
+#      discovery:
+#        enabled: ${NACOS_ENABLED:true}
+#        namespace: ${NACOS_NAMESPACE:}
+#        server-addr: ${NACOS_ADDR:localhost:8848}

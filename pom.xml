@@ -16,6 +16,7 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <spring.cloud.dependencies.version>2020.0.5</spring.cloud.dependencies.version>
         <mysql.connector.java.version>5.1.47</mysql.connector.java.version>
         <mybatis.spring.boot.starter.version>2.2.0</mybatis.spring.boot.starter.version>
         <druid.spring.boot.starter.version>1.1.10</druid.spring.boot.starter.version>
@@ -26,7 +27,22 @@
         <jackson.version>2.12.0</jackson.version>
         <commons.lang3.version>3.11</commons.lang3.version>
         <poi.version>5.0.0</poi.version>
+        <jasypt.spring.boot.starter.version>3.0.5</jasypt.spring.boot.starter.version>
+        <redisson.spring.boot.starter.version>3.15.6</redisson.spring.boot.starter.version>
     </properties>
+
+    <!--spring cloud dependencies-->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring.cloud.dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -43,6 +59,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--actuator-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!--bootstrap-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
         </dependency>
 
         <!--mysql连接驱动-->
@@ -94,7 +122,7 @@
             <version>${swagger.spring.boot.starter.version}</version>
         </dependency>
 
-        <!--校验-->
+        <!--validation-api-->
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
@@ -136,6 +164,32 @@
             <artifactId>poi-ooxml</artifactId>
             <version>${poi.version}</version>
         </dependency>
+
+        <!--jasypt-->
+        <dependency>
+            <groupId>com.github.ulisesbocchio</groupId>
+            <artifactId>jasypt-spring-boot-starter</artifactId>
+            <version>${jasypt.spring.boot.starter.version}</version>
+        </dependency>
+
+        <!-- Spring Boot Redis （lettuce）-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <!-- redis连接池（适用于jedis、lettuce） -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+
+        <!--Redisson-->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+            <version>${redisson.spring.boot.starter.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
