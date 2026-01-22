@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zy.demo.dao.mysql.IdUserBaseMapper">
+  <!--mapper维度开启二级缓存-->
+  <cache eviction="LRU" flushInterval="60000" size="1024" readOnly="false"/>
+
   <resultMap id="BaseResultMap" type="com.zy.demo.model.IdUserBase">
     <id column="user_id" jdbcType="BIGINT" property="userId" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
@@ -11,7 +14,41 @@
     <result column="user_status" jdbcType="CHAR" property="userStatus" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <!--一对一关联查询-->
+    <association property="idUserPwd" javaType="com.zy.demo.model.IdUserPwd">
+        <id property="userPwdId" column="user_pwd_id"/>
+        <result property="userPwd" column="user_pwd"/>
+    </association>
+    <!--一对一嵌套查询-->
+    <association
+        property="idUserPwd"
+        select="com.zy.demo.dao.mysql.IdUserPwdMapper.selectByUserId"
+        column="user_id"
+        fetchType="lazy"/>
+    <!--一对多关联查询-->
+    <collection property="idUserJobList" ofType="com.zy.demo.model.IdUserJob">
+        <id property="userJobId" column="user_job_id"/>
+        <result property="jobType" column="job_type"/>
+        <result property="jobName" column="job_name"/>
+    </collection>
+    <!--一对多嵌套查询-->
+    <collection
+        property="idUserJobList"
+        select="com.zy.demo.dao.mysql.IdUserJobMapper.selectByUserId"
+        column="user_id"
+        fetchType="lazy"/>
   </resultMap>
+
+  <parameterMap id="baseCondMap" type="com.zy.demo.model.IdUserBase">
+    <parameter property="userId" jdbcType="BIGINT"/>
+    <parameter property="userName" jdbcType="VARCHAR"/>
+    <parameter property="fullName" jdbcType="VARCHAR"/>
+    <parameter property="mobile" jdbcType="VARCHAR"/>
+    <parameter property="idCard" jdbcType="VARCHAR"/>
+    <parameter property="sex" jdbcType="BOOLEAN"/>
+    <parameter property="userStatus" jdbcType="VARCHAR"/>
+  </parameterMap>
+
   <sql id="Base_Column_List">
     user_id, user_name, full_name, mobile, id_card, sex, user_status, create_time, update_time
   </sql>
@@ -130,4 +167,88 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where user_id = #{userId,jdbcType=BIGINT}
   </update>
+
+    
+  <select id="selectJointByOneToOne" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select iub.user_id, iub.full_name, iup.user_pwd
+    from id_user_base iub
+    left join id_user_pwd iup on iub.user_id = iup.user_id
+    where iub.user_id = #{userId,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectNestByOneToOne" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select user_id
+    from id_user_base
+    where user_id = #{userId,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectJointByOneToMany" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select iub.user_id, iub.full_name, iuj.job_id, iuj.job_name
+    from id_user_base iub
+    left join id_user_job iuj on iub.user_id = iuj.user_id
+    where iub.user_id = #{userId,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectNestByOneToMany" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select user_id
+        from id_user_base
+        where user_id = #{userId,jdbcType=BIGINT}
+    </select>
+
+  <select id="selectByPaging" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from id_user_base
+    <where>
+      <if test="fullName != null">
+        and full_name = #{fullName,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+  
+  <insert id="insertOne" parameterMap="baseCondMap">
+    insert into id_user_base (user_id, user_name, full_name, mobile,
+      id_card, sex, user_status)
+    values (#{userId,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{fullName,jdbcType=VARCHAR}, #{mobile,jdbcType=CHAR},
+      #{idCard,jdbcType=CHAR}, #{sex,jdbcType=BOOLEAN}, #{userStatus,jdbcType=CHAR})
+  </insert>
+
+  <insert id="insertBatch">
+    insert into id_user_base (user_id, user_name, full_name, mobile, id_card, sex, user_status)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{userId,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{fullName,jdbcType=VARCHAR}, #{mobile,jdbcType=CHAR},
+      #{idCard,jdbcType=CHAR}, #{sex,jdbcType=BOOLEAN}, #{userStatus,jdbcType=CHAR})
+    </foreach>
+  </insert>
+
+  <select id="selectByIndex" resultMap="BaseResultMap">
+    <bind name="attr" value="'%' + param1 + '%'"/>
+    select
+    <include refid="Base_Column_List" />
+    from id_user_base
+    <where>
+      and full_name like #{attr}
+      and user_name = #{param2}
+    </where>
+  </select>
+
+  <select id="selectByMap" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from id_user_base
+    <where>
+      <choose>
+        <when test="fullName != null and fullName != ''">
+          and full_name = #{fullName}
+        </when>
+        <when test="userName != null and userName != ''">
+          and user_name = #{userName}
+        </when>
+        <otherwise>
+          and 1 = 1
+        </otherwise>
+      </choose>
+    </where>
+  </select>
 </mapper>

@@ -108,4 +108,11 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where user_job_id = #{userJobId,jdbcType=BIGINT}
   </update>
+
+  <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from id_user_job
+    where user_id = #{userId,jdbcType=BIGINT}
+  </select>
 </mapper>

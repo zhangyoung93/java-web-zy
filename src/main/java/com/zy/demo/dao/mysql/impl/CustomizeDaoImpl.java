@@ -1,6 +1,6 @@
 package com.zy.demo.dao.mysql.impl;
 
-import com.zy.demo.model.ZyUser;
+import com.zy.demo.model.IdUserBase;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
@@ -25,11 +25,11 @@ public class CustomizeDaoImpl extends SqlSessionDaoSupport {
         this.sqlSessionTemplate = sqlSessionTemplate;
     }
 
-    public ZyUser getZyUserById(Long userId) {
-        ZyUser zyUser;
+    public IdUserBase getZyUserById(Long userId) {
+        IdUserBase idUserBase;
         //getSqlSession()获取到的是SqlSessionTemplate，线程安全。spring项目中可直接注入已经注册的SqlSessionTemplate使用。
 //      zyUser = getSqlSession().selectOne(MAPPER_STATEMENT, userId);
-        zyUser = this.sqlSessionTemplate.selectOne(MAPPER_STATEMENT, userId);
-        return zyUser;
+        idUserBase = this.sqlSessionTemplate.selectOne(MAPPER_STATEMENT, userId);
+        return idUserBase;
     }
 }
