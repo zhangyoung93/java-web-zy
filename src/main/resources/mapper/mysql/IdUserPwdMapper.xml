@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zy.demo.dao.mysql.IdUserPwdMapper">
+  <resultMap id="BaseResultMap" type="com.zy.demo.model.IdUserPwd">
+    <id column="user_pwd_id" jdbcType="BIGINT" property="userPwdId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="user_pwd" jdbcType="VARCHAR" property="userPwd" />
+    <result column="user_pwd_status" jdbcType="CHAR" property="userPwdStatus" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    user_pwd_id, user_id, user_pwd, user_pwd_status, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from id_user_pwd
+    where user_pwd_id = #{userPwdId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from id_user_pwd
+    where user_pwd_id = #{userPwdId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="user_pwd_id" keyProperty="userPwdId" parameterType="com.zy.demo.model.IdUserPwd" useGeneratedKeys="true">
+    insert into id_user_pwd (user_id, user_pwd, user_pwd_status, 
+      create_time, update_time)
+    values (#{userId,jdbcType=BIGINT}, #{userPwd,jdbcType=VARCHAR}, #{userPwdStatus,jdbcType=CHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" keyColumn="user_pwd_id" keyProperty="userPwdId" parameterType="com.zy.demo.model.IdUserPwd" useGeneratedKeys="true">
+    insert into id_user_pwd
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userPwd != null">
+        user_pwd,
+      </if>
+      <if test="userPwdStatus != null">
+        user_pwd_status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userPwd != null">
+        #{userPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="userPwdStatus != null">
+        #{userPwdStatus,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zy.demo.model.IdUserPwd">
+    update id_user_pwd
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userPwd != null">
+        user_pwd = #{userPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="userPwdStatus != null">
+        user_pwd_status = #{userPwdStatus,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where user_pwd_id = #{userPwdId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zy.demo.model.IdUserPwd">
+    update id_user_pwd
+    set user_id = #{userId,jdbcType=BIGINT},
+      user_pwd = #{userPwd,jdbcType=VARCHAR},
+      user_pwd_status = #{userPwdStatus,jdbcType=CHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where user_pwd_id = #{userPwdId,jdbcType=BIGINT}
+  </update>
+</mapper>
