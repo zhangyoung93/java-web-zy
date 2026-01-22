@@ -72,7 +72,7 @@ public class RedisOpUtil {
         try {
             object = this.redisTemplate.opsForValue().get(key);
         } catch (Exception e) {
-            log.error("Redis-set操作异常", e);
+            log.error("Redis-getValue操作异常", e);
         }
         return object;
     }
@@ -83,7 +83,7 @@ public class RedisOpUtil {
         try {
             hasKey = this.redisTemplate.hasKey(key);
         } catch (Exception e) {
-            log.error("Redis-exists操作异常", e);
+            log.error("Redis-hasKey操作异常", e);
         }
         return Optional.ofNullable(hasKey).orElse(false);
     }
@@ -94,7 +94,7 @@ public class RedisOpUtil {
         try {
             newValue = this.redisTemplate.opsForValue().increment(key);
         } catch (Exception e) {
-            log.error("Redis-exists操作异常", e);
+            log.error("Redis-incr操作异常", e);
         }
         return newValue;
     }
@@ -104,7 +104,7 @@ public class RedisOpUtil {
         try {
             this.redisTemplate.opsForHash().putAll(key, map);
         } catch (Exception e) {
-            log.error("Redis-exists操作异常", e);
+            log.error("Redis-hSetAll操作异常", e);
         }
     }
 
