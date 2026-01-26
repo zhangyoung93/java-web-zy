@@ -22,6 +22,7 @@
         <druid.spring.boot.starter.version>1.1.10</druid.spring.boot.starter.version>
         <pagehelper.spring.boot.starter.version>1.4.7</pagehelper.spring.boot.starter.version>
         <lombok.version>1.18.18</lombok.version>
+        <log4j2.version>2.25.3</log4j2.version>
         <swagger.spring.boot.starter.version>1.9.1.RELEASE</swagger.spring.boot.starter.version>
         <validation.api.version>1.1.0.Final</validation.api.version>
         <jackson.version>2.12.0</jackson.version>
@@ -48,6 +49,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <exclusions>
+                <!-- 排除logback依赖 -->
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -113,6 +121,23 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+        </dependency>
+
+        <!-- log4j2 -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j2.version}</version>
         </dependency>
 
         <!--swagger-->
@@ -197,6 +222,35 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- 配置JVM参数，本地调试 -->
+                    <jvmArguments>
+                        <!--初始堆内存-->
+                        -Xms256m
+                        <!--最大堆内存-->
+                        -Xmx256m
+                        <!--新生代内存-->
+                        -Xmn128m
+                        <!--元空间内存，达到后触发fullGC-->
+                        -XX:MetaspaceSize=128m
+                        <!--元空间最大内存-->
+                        -XX:MaxMetaspaceSize=128m
+                        <!--OOM时自动生成堆转储文件-->
+                        -XX:+HeapDumpOnOutOfMemoryError
+                        <!--堆转储文件的路径-->
+                        -XX:HeapDumpPath=C:/Users/zy/Desktop/oom_dump.hprof
+                        <!--young gc/full gc发生时，输出详细的内存回收日志-->
+                        -XX:+PrintGCDetails
+                        <!--输出GC发生时JVM已经启动的时间，单位秒-->
+                        -XX:+PrintGCTimeStamps
+                        <!--输出GC发生的具体时间-->
+                        -XX:+PrintGCDateStamps
+                        <!--指定GC日志文件的路径-->
+                        -Xloggc:./gc.log
+                        <!--指定垃圾回收器-->
+                        <!-- -XX:+UseG1GC-->
+                    </jvmArguments>
+                </configuration>
             </plugin>
         </plugins>
     </build>
