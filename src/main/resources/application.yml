@@ -235,14 +235,7 @@ swagger:
 
 #日志
 logging:
-  #  config: classpath:log4j2-base.xml
-  file:
-    name: java-web-zy.log
-  level:
-    #打印SQL日志
-    com.zy.demo.dao: DEBUG
-    #打印redis日志
-    org.springframework.data.redis: WARN
+  config: classpath:log4j2-dev.xml
 
 #jasypt
 jasypt:

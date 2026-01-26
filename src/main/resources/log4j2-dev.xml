@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--log4j2框架的日志级别，不是业务日志-->
+<Configuration status="WARN" >
+    <!--属性-->
+    <Properties>
+        <!--字符编码-->
+        <Property name="CHARSET" value="UTF-8"/>
+        <!--日志文件路径，"-"表示即使LOG_PATH为空值也会指定路径是./logs-->
+        <Property name="LOG_FILE_PATH" value="./logs"/>
+        <!--日志文件名称-->
+        <Property name="LOG_FILE_NAME" value="java-web-zy"/>
+        <!--日志模板-->
+        <Property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [reqTraceId=%X{requestTraceId}] [traceId=%X{traceId}] %c:%L - %msg%n"/>
+        <!--控制台日志模板-->
+        <Property name="CONSOLE_LOG_PATTERN" value="%highlight{%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [reqTraceId=%X{requestTraceId}] [traceId=%X{traceId}] %c:%L - %msg%n}{FATAL=red, ERROR=red, WARN=yellow, INFO=default, DEBUG=blue}"/>
+        <!--单个日志文件最大占用空间-->
+        <Property name="MAX_FILE_SIZE" value="100MB"/>
+        <!--日志文件最大保留天数-->
+        <Property name="MAX_HISTORY_DAY" value="90"/>
+        <!--日志文件最大保留数量-->
+        <Property name="MAX_HISTORY_NUM" value="15"/>
+        <!--所有日志文件最大占用空间-->
+        <Property name="MAX_TOTAL_SIZE" value="10GB"/>
+    </Properties>
+
+    <!--追加器-->
+    <Appenders>
+        <!--控制台输出-->
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <!--日志格式-->
+            <PatternLayout pattern="${CONSOLE_LOG_PATTERN}" charset="${CHARSET}"/>
+            <!--阈值过滤器。仅允许debug级别及以上的日志输出-->
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Console>
+
+        <!--ALL级别滚动文件-->
+        <RollingFile name="AllFileAppender" fileName="${LOG_FILE_PATH}/${LOG_FILE_NAME}-all.log" filePattern="${LOG_FILE_PATH}/history/${LOG_FILE_NAME}-all-%d{yyyy-MM-dd}-%i.log">
+            <!--过滤器-->
+            <Filters>
+                <!--仅允许INFO日志输出-->
+                <ThresholdFilter level="ALL" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <!--日志格式-->
+            <PatternLayout pattern="${LOG_PATTERN}" charset="${CHARSET}"/>
+            <!--策略-->
+            <Policies>
+                <!--按天分割-->
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <!--按文件大小分割-->
+                <SizeBasedTriggeringPolicy size="${MAX_FILE_SIZE}"/>
+            </Policies>
+            <!--默认滚动策略，指定最大文件保留数目-->
+            <DefaultRolloverStrategy max="${MAX_HISTORY_NUM}">
+                <!--清理文件目录，最大深度1表示只清理目录下一级的文件-->
+                <Delete basePath="${LOG_FILE_PATH}/history" maxDepth="1">
+                    <!--文件名称匹配glob的清理-->
+                    <IfFileName glob="${LOG_FILE_NAME}-all-*.log"/>
+                    <!--文件上次被修改时间超过age的清理-->
+                    <IfLastModified age="${MAX_HISTORY_DAY}D"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!--INFO级别滚动文件-->
+        <RollingFile name="InfoFileAppender" fileName="${LOG_FILE_PATH}/${LOG_FILE_NAME}-info.log" filePattern="${LOG_FILE_PATH}/history/${LOG_FILE_NAME}-info-%d{yyyy-MM-dd}-%i.log">
+            <!--过滤器-->
+            <Filters>
+                <!--仅允许INFO日志输出-->
+                <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+                <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="ACCEPT"/>
+            </Filters>
+            <!--日志格式-->
+            <PatternLayout pattern="${LOG_PATTERN}" charset="${CHARSET}"/>
+            <!--策略-->
+            <Policies>
+                <!--按天分割-->
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <!--按文件大小分割-->
+                <SizeBasedTriggeringPolicy size="${MAX_FILE_SIZE}"/>
+            </Policies>
+            <!--默认滚动策略，指定最大文件保留数目-->
+            <DefaultRolloverStrategy max="${MAX_HISTORY_NUM}">
+                <!--清理文件目录，最大深度1表示只清理目录下一级的文件-->
+                <Delete basePath="${LOG_FILE_PATH}/history" maxDepth="1">
+                    <!--文件名称匹配glob的清理-->
+                    <IfFileName glob="${LOG_FILE_NAME}-info-*.log"/>
+                    <!--文件上次被修改时间超过age的清理-->
+                    <IfLastModified age="${MAX_HISTORY_DAY}D"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!--WARN级别滚动文件-->
+        <RollingFile name="WarnFileAppender" fileName="${LOG_FILE_PATH}/${LOG_FILE_NAME}-warn.log" filePattern="${LOG_FILE_PATH}/history/${LOG_FILE_NAME}-warn-%d{yyyy-MM-dd}-%i.log">
+            <!--过滤器-->
+            <Filters>
+                <!--仅允许WARN日志输出-->
+                <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+                <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="ACCEPT"/>
+            </Filters>
+            <!--日志格式-->
+            <PatternLayout pattern="${LOG_PATTERN}" charset="${CHARSET}"/>
+            <!--策略-->
+            <Policies>
+                <!--按天分割-->
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <!--按文件大小分割-->
+                <SizeBasedTriggeringPolicy size="${MAX_FILE_SIZE}"/>
+            </Policies>
+            <!--默认滚动策略，指定最大文件保留数目-->
+            <DefaultRolloverStrategy max="${MAX_HISTORY_NUM}">
+                <!--清理文件目录，最大深度1表示只清理目录下一级的文件-->
+                <Delete basePath="${LOG_FILE_PATH}/history" maxDepth="1">
+                    <!--文件名称匹配glob的清理-->
+                    <IfFileName glob="${LOG_FILE_NAME}-warn-*.log"/>
+                    <!--文件上次被修改时间超过age的清理-->
+                    <IfLastModified age="${MAX_HISTORY_DAY}D"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <!--ERROR级别滚动文件-->
+        <RollingFile name="ErrorFileAppender" fileName="${LOG_FILE_PATH}/${LOG_FILE_NAME}-error.log" filePattern="${LOG_FILE_PATH}/history/${LOG_FILE_NAME}-error-%d{yyyy-MM-dd}-%i.log">
+            <!--过滤器-->
+            <Filters>
+                <!--仅允许WARN日志输出-->
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <!--日志格式-->
+            <PatternLayout pattern="${LOG_PATTERN}" charset="${CHARSET}"/>
+            <!--策略-->
+            <Policies>
+                <!--按天分割-->
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <!--按文件大小分割-->
+                <SizeBasedTriggeringPolicy size="${MAX_FILE_SIZE}"/>
+            </Policies>
+            <!--默认滚动策略，指定最大文件保留数目-->
+            <DefaultRolloverStrategy max="${MAX_HISTORY_NUM}">
+                <!--清理文件目录，最大深度1表示只清理目录下一级的文件-->
+                <Delete basePath="${LOG_FILE_PATH}/history" maxDepth="1">
+                    <!--文件名称匹配glob的清理-->
+                    <IfFileName glob="${LOG_FILE_NAME}-error-*.log"/>
+                    <!--文件上次被修改时间超过age的清理-->
+                    <IfLastModified age="${MAX_HISTORY_DAY}D"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+    </Appenders>
+
+    <!--日志器-->
+    <loggers>
+        <!--根日志器-->
+        <root level="INFO">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="AllFileAppender"/>
+            <AppenderRef ref="InfoFileAppender"/>
+            <AppenderRef ref="WarnFileAppender"/>
+            <AppenderRef ref="ErrorFileAppender"/>
+        </root>
+
+        <!--mybatis-sql日志-->
+        <logger name="com.zy.demo.dao" level="DEBUG" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="AllFileAppender"/>
+        </logger>
+    </loggers>
+
+</Configuration>
