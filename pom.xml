@@ -225,20 +225,20 @@
                 <configuration>
                     <!-- 配置JVM参数，本地调试 -->
                     <jvmArguments>
-                        <!--初始堆内存-->
-                        -Xms256m
-                        <!--最大堆内存-->
-                        -Xmx256m
-                        <!--新生代内存-->
-                        -Xmn128m
-                        <!--元空间内存，达到后触发fullGC-->
-                        -XX:MetaspaceSize=128m
+                        <!--初始堆内存-XX:InitialHeapSize-->
+                        -Xms8g
+                        <!--最大堆内存-XX:MaxHeapSize-->
+                        -Xmx8g
+                        <!--新生代内存-XX:MaxNewSize=-XX:NewSize-->
+                        -Xmn4g
+                        <!--元空间内存-->
+                        -XX:MetaspaceSize=256m
                         <!--元空间最大内存-->
-                        -XX:MaxMetaspaceSize=128m
+                        -XX:MaxMetaspaceSize=512m
                         <!--OOM时自动生成堆转储文件-->
                         -XX:+HeapDumpOnOutOfMemoryError
                         <!--堆转储文件的路径-->
-                        -XX:HeapDumpPath=C:/Users/zy/Desktop/oom_dump.hprof
+                        -XX:HeapDumpPath=E:/Java/jvm-dump/oom_dump.hprof
                         <!--young gc/full gc发生时，输出详细的内存回收日志-->
                         -XX:+PrintGCDetails
                         <!--输出GC发生时JVM已经启动的时间，单位秒-->
