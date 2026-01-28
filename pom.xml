@@ -226,11 +226,13 @@
                     <!-- 配置JVM参数，本地调试 -->
                     <jvmArguments>
                         <!--初始堆内存-XX:InitialHeapSize-->
-                        -Xms8g
+                        -Xms8G
                         <!--最大堆内存-XX:MaxHeapSize-->
-                        -Xmx8g
+                        -Xmx8G
                         <!--新生代内存-XX:MaxNewSize=-XX:NewSize-->
-                        -Xmn4g
+                        -Xmn4G
+                        <!--线程栈大小-XX:ThreadStackSize-->
+                        -Xss2M
                         <!--元空间内存-->
                         -XX:MetaspaceSize=256m
                         <!--元空间最大内存-->
