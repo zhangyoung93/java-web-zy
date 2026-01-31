@@ -4,6 +4,7 @@ import com.zy.demo.event.MailSendEvent;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.env.Environment;
 
 /**
  * 应用上下文
@@ -17,6 +18,26 @@ public class ApplicationContextUtil implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    /**
+     * 获取环境信息
+     *
+     * @return Environment
+     */
+    public Environment getEnvironment() {
+        return this.applicationContext.getEnvironment();
+    }
+
+    /**
+     * 获取配置项的值
+     *
+     * @param name         配置项name
+     * @param defaultValue 配置项默认值
+     * @return 配置项value
+     */
+    public String getProperty(String name, String defaultValue) {
+        return this.applicationContext.getEnvironment().getProperty(name, defaultValue);
     }
 
     /**
