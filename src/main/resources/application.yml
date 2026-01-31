@@ -88,6 +88,16 @@ spring:
   aop:
     #Spring动态代理方式：springboot2.X后默认是CGLIB(true)
     proxy-target-class: true
+  messages:
+    #国际化配置路径及文件名称前缀
+    basename: i18n/messages
+    #配置文件编码
+    encoding: UTF-8
+    #缓存刷新时间
+    cache-duration: 3600s
+    #关闭系统默认规则，优先使用项目配置
+    fallback-to-system-locale: false
+
   #jackson配置
   jackson:
     #序列化
@@ -211,6 +221,11 @@ mybatis:
   plugin:
     #sql耗时阈值，单位毫秒
     sql-cost-time-threshold: 2000
+
+#redisson
+redisson:
+  #是否覆盖自动配置，手动注册Bean
+  enable: true
 
 #分页插件
 pagehelper:

@@ -9,7 +9,6 @@ import com.zy.demo.util.RedisOpUtil;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
@@ -32,9 +31,6 @@ import java.util.List;
  */
 @Configuration
 public class RedisConfig {
-
-    @Value("${redisson.mode:single}")
-    private String redisMode;
 
     /**
      * 配置redisTemplate
@@ -115,13 +111,13 @@ public class RedisConfig {
      */
     @ConditionalOnProperty(prefix = "redisson", name = "enable", havingValue = "true")
     @Bean(destroyMethod = "shutdown")
-    public RedissonClient redissonClient(RedisProperties redisProperties) throws Exception {
+    public RedissonClient redissonClient(RedisProperties redisProperties, RedissonConfiguration redissonConfiguration) throws Exception {
         Config config = new Config();
         List<String> nodeList;
         String[] nodes;
-        switch (this.redisMode) {
+        switch (redissonConfiguration.getMode()) {
             case "single":
-                config.useSingleServer().setAddress(redisProperties.getUrl())
+                config.useSingleServer().setAddress(redissonConfiguration.getUrl())
                         .setPassword(redisProperties.getPassword())
                         .setDatabase(redisProperties.getDatabase());
                 break;
