@@ -1,5 +1,6 @@
 package com.zy.demo.config;
 
+import com.zy.demo.util.ApplicationContextUtil;
 import com.zy.demo.util.I18nUtil;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -22,5 +23,15 @@ public class UtilsConfig {
     @Bean
     public I18nUtil i18nUtil(MessageSource messageSource) {
         return new I18nUtil(messageSource);
+    }
+
+    /**
+     * 应用上下文
+     *
+     * @return ApplicationContextUtil
+     */
+    @Bean
+    public ApplicationContextUtil applicationContextUtil() {
+        return new ApplicationContextUtil();
     }
 }
