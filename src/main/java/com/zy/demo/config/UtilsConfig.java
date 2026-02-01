@@ -27,10 +27,11 @@ public class UtilsConfig {
 
     /**
      * 应用上下文
+     * 指定Bean初始化方法
      *
      * @return ApplicationContextUtil
      */
-    @Bean
+    @Bean(initMethod = "init")
     public ApplicationContextUtil applicationContextUtil() {
         return new ApplicationContextUtil();
     }

@@ -1,6 +1,7 @@
 package com.zy.demo.util;
 
 import com.zy.demo.event.MailSendEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -11,6 +12,7 @@ import org.springframework.core.env.Environment;
  *
  * @author zy
  */
+@Slf4j
 public class ApplicationContextUtil implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
@@ -18,6 +20,13 @@ public class ApplicationContextUtil implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    /**
+     * Bean的初始化方法
+     */
+    private void init() {
+        log.info("ApplicationContextUtil初始化完成");
     }
 
     /**
@@ -37,7 +46,7 @@ public class ApplicationContextUtil implements ApplicationContextAware {
      * @return 配置项value
      */
     public String getProperty(String name, String defaultValue) {
-        return this.applicationContext.getEnvironment().getProperty(name, defaultValue);
+        return getEnvironment().getProperty(name, defaultValue);
     }
 
     /**
