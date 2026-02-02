@@ -25,7 +25,7 @@ public class ApplicationContextUtil implements ApplicationContextAware {
     /**
      * Bean的初始化方法
      */
-    private void init() {
+    public void init() {
         log.info("ApplicationContextUtil初始化完成");
     }
 
