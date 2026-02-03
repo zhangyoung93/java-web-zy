@@ -19,12 +19,13 @@ public class MyTest {
     }
 
     @Test
-    public void context() {
+    public void context() throws InterruptedException {
         System.out.println("集成测试开始");
         long start = System.currentTimeMillis();
         contextTest();
         long end = System.currentTimeMillis();
         System.out.println("集成测试结束，程序执行耗费时间=" + (end - start) + "ms");
+        Thread.sleep(2000L);
     }
 
     private void contextTest() {
