@@ -7,11 +7,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class MyTest {
 
     public static void main(String[] args) {
-        System.out.println("单元测试开始");
+        System.out.println("main test start...");
         long start = System.currentTimeMillis();
         mainTest();
         long end = System.currentTimeMillis();
-        System.out.println("单元测试结束，程序执行耗费时间=" + (end - start) + "ms");
+        System.out.println("main test end，cost time=" + (end - start) + "ms");
     }
 
     private static void mainTest() {
@@ -20,11 +20,11 @@ public class MyTest {
 
     @Test
     public void context() throws InterruptedException {
-        System.out.println("集成测试开始");
+        System.out.println("context test start...");
         long start = System.currentTimeMillis();
         contextTest();
         long end = System.currentTimeMillis();
-        System.out.println("集成测试结束，程序执行耗费时间=" + (end - start) + "ms");
+        System.out.println("contest test end，cost time=" + (end - start) + "ms");
         Thread.sleep(2000L);
     }
 
