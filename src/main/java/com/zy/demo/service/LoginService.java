@@ -1,6 +1,6 @@
 package com.zy.demo.service;
 
-import com.zy.demo.annotation.SpringPointcut;
+import com.zy.demo.annotation.JdkPointcut;
 import com.zy.demo.pojo.LoginDto;
 
 /**
@@ -18,6 +18,6 @@ public interface LoginService {
      * @return boolean
      * @throws Exception Exception
      */
-    @SpringPointcut
+    @JdkPointcut
     boolean doLogin(LoginDto loginDto) throws Exception;
 }

@@ -1,6 +1,6 @@
 package com.zy.demo.proxy;
 
-import com.zy.demo.annotation.SpringPointcut;
+import com.zy.demo.annotation.JdkPointcut;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationHandler;
@@ -52,7 +52,7 @@ public class JdkDynamicProxy implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object object;
-        if (!method.isAnnotationPresent(SpringPointcut.class)) {
+        if (!method.isAnnotationPresent(JdkPointcut.class)) {
             object = method.invoke(this.target, args);
         } else {
             long startTime = System.currentTimeMillis();
