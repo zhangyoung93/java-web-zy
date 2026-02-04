@@ -35,6 +35,7 @@ public class JdkDynamicProxy implements InvocationHandler {
         ClassLoader classLoader = target.getClass().getClassLoader();
         Class<?>[] interfaces = target.getClass().getInterfaces();
         InvocationHandler invocationHandler = new JdkDynamicProxy(target);
+        //创建代理对象的条件：目标类加载器 + 目标类实现接口 + 拦截处理器
         Object object = Proxy.newProxyInstance(classLoader, interfaces, invocationHandler);
         log.info("JdkDynamicProxy-createProxy={}", object);
         return object;
@@ -52,13 +53,14 @@ public class JdkDynamicProxy implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object object;
-        if (!method.isAnnotationPresent(JdkPointcut.class)) {
-            object = method.invoke(this.target, args);
-        } else {
+        //被注解@JdkPointcut的方法才会拦截
+        if (method.isAnnotationPresent(JdkPointcut.class)) {
             long startTime = System.currentTimeMillis();
             object = method.invoke(this.target, args);
             long endTime = System.currentTimeMillis();
-            log.info("target method=[{}],args=[{}],cost time=[{}ms]", method.getName(), Arrays.toString(args), endTime - startTime);
+            log.info("JDK target method=[{}],args=[{}],cost time=[{}ms]", method.getName(), Arrays.toString(args), endTime - startTime);
+        } else {
+            object = method.invoke(this.target, args);
         }
         return object;
     }
