@@ -1,7 +1,6 @@
 package com.zy.demo.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * Mybatis插件配置
