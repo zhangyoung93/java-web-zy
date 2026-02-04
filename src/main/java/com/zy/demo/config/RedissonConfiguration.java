@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
  *
  * @author zy
  */
-@Component
 @ConfigurationProperties(prefix = "redisson")
 public class RedissonConfiguration {
 

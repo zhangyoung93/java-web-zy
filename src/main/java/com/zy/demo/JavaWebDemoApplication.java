@@ -5,6 +5,7 @@ import com.zy.demo.bean.SpringBootBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
@@ -19,7 +20,7 @@ import org.springframework.context.annotation.Bean;
  * 开启Bean自动配置。加载自动配置的Bean。
  * 从META-INF/spring.factories加载org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * 或者从META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports文件加载。
- *
+ * <p>
  * 3、@ComponentScan
  * 设置Bean扫描路径：扫描当前注解所在类的包及其所有子包
  * <p>
@@ -30,6 +31,7 @@ import org.springframework.context.annotation.Bean;
  */
 @SpringBootApplication
 @EnableSwagger2Doc
+@ConfigurationPropertiesScan(basePackages = "com.zy.demo.config")
 @MapperScan(basePackages = "com.zy.demo.dao.mysql")
 public class JavaWebDemoApplication {
 
