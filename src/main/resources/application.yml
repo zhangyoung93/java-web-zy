@@ -206,6 +206,23 @@ management:
     ldap:
       enabled: false
 
+web:
+  mvc:
+    #接口签名拦截
+    sign:
+      #签名密钥，暂时写在配置文件里。生产环境每个应用对应一个密钥。
+      secret: PQkhbohRGGsb5vvhDObEOear3Qt2D2VLF-9N2tRvOOw
+      #拦截路径
+      include-paths:
+        - /batch/data
+    #接口幂等拦截
+    idempotent:
+      #幂等有效期。单位：秒。默认3600。
+      valid-time: 3600
+      #拦截路径（路径 + 幂等判断字段）
+      include-paths:
+        /batch/data: mobile
+
 #mybatis
 mybatis:
   #mapper文件路径
