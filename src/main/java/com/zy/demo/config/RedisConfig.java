@@ -111,13 +111,13 @@ public class RedisConfig {
      */
     @ConditionalOnProperty(prefix = "redisson", name = "enable", havingValue = "true")
     @Bean(destroyMethod = "shutdown")
-    public RedissonClient redissonClient(RedisProperties redisProperties, RedissonConfiguration redissonConfiguration) throws Exception {
+    public RedissonClient redissonClient(RedisProperties redisProperties, RedissonProperties redissonProperties) throws Exception {
         Config config = new Config();
         List<String> nodeList;
         String[] nodes;
-        switch (redissonConfiguration.getMode()) {
+        switch (redissonProperties.getMode()) {
             case "single":
-                config.useSingleServer().setAddress(redissonConfiguration.getUrl())
+                config.useSingleServer().setAddress(redissonProperties.getUrl())
                         .setPassword(redisProperties.getPassword())
                         .setDatabase(redisProperties.getDatabase());
                 break;

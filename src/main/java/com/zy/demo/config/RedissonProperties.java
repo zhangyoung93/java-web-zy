@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author zy
  */
 @ConfigurationProperties(prefix = "redisson")
-public class RedissonConfiguration {
+public class RedissonProperties {
 
     /**
      * 是否覆盖自动配置，手动注册Bean

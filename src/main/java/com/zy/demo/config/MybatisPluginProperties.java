@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author zy
  */
 @ConfigurationProperties(prefix = "mybatis.plugin")
-public class MybatisPluginConfiguration {
+public class MybatisPluginProperties {
 
     /**
      * sql耗时阈值，单位毫秒

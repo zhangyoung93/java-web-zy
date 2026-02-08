@@ -14,10 +14,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MybatisConfig {
 
-    private final MybatisPluginConfiguration mybatisPluginConfiguration;
+    private final MybatisPluginProperties mybatisPluginProperties;
 
-    public MybatisConfig(MybatisPluginConfiguration mybatisPluginConfiguration) {
-        this.mybatisPluginConfiguration = mybatisPluginConfiguration;
+    public MybatisConfig(MybatisPluginProperties mybatisPluginProperties) {
+        this.mybatisPluginProperties = mybatisPluginProperties;
     }
 
     /**
@@ -28,7 +28,7 @@ public class MybatisConfig {
     @Bean
     public SqlTimeConsumeMonitorPlugin sqlTimeConsumeMonitorPlugin() {
         SqlTimeConsumeMonitorPlugin sqlTimeConsumeMonitorPlugin = new SqlTimeConsumeMonitorPlugin();
-        sqlTimeConsumeMonitorPlugin.setMybatisPluginConfiguration(this.mybatisPluginConfiguration);
+        sqlTimeConsumeMonitorPlugin.setMybatisPluginProperties(this.mybatisPluginProperties);
         return sqlTimeConsumeMonitorPlugin;
     }
 
