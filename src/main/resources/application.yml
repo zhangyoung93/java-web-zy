@@ -98,6 +98,42 @@ spring:
     #关闭系统默认规则，优先使用项目配置
     fallback-to-system-locale: false
 
+  cloud:
+    #sentinel
+    sentinel:
+      #控制台连接配置
+      transport:
+        #控制台地址
+        dashboard: localhost:8081
+        #客户端与控制台通信的端口（默认8719，若被占用会自动递增）
+        port: 8719
+      #规则持久化配置（生产级：对接Nacos，避免重启丢失规则）
+      datasource:
+        #流量规则
+        flow:
+          nacos:
+            namespace: ${spring.cloud.nacos.config.namespace}
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            dataId: ${spring.application.name}-flow-rules
+            groupId: DEFAULT_GROUP
+            #规则类型：flow(流量)/degrade(熔断)/system(系统保护)
+            rule-type: flow
+            data-type: json
+            username: nacos
+            password: nacos
+        #熔断规则
+        degrade:
+          nacos:
+            namespace: ${spring.cloud.nacos.config.namespace}
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            dataId: ${spring.application.name}-degrade-rules
+            groupId: DEFAULT_GROUP
+            rule-type: degrade
+            data-type: json
+            username: nacos
+            password: nacos
+      #关闭懒加载（项目启动即连接控制台，默认首次请求后才注册）
+      eager: true
   #jackson配置
   jackson:
     #序列化

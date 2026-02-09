@@ -1,5 +1,6 @@
 package com.zy.demo.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.zy.demo.pojo.BaseResponse;
 import com.zy.demo.pojo.UserDto;
 import com.zy.demo.service.BatchDataService;
@@ -13,10 +14,12 @@ import java.util.List;
 
 /**
  * 保存批量数据接口
+ * 添加流控、熔断
  *
  * @author zy
  */
 @Slf4j
+@SentinelResource(value = "batchDataApi")
 @RestController
 @RequestMapping("/batch/data")
 public class BatchDataController {

@@ -1,6 +1,7 @@
 package com.zy.demo.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Map;
  *
  * @author zy
  */
+@RefreshScope
 @ConfigurationProperties(prefix = "web.mvc")
 public class WebMvcProperties {
 

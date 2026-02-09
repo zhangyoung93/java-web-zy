@@ -17,6 +17,7 @@
     <properties>
         <java.version>1.8</java.version>
         <spring.cloud.dependencies.version>2020.0.5</spring.cloud.dependencies.version>
+        <spring.cloud.alibaba.dependencies.version>2021.0.5.0</spring.cloud.alibaba.dependencies.version>
         <mysql.connector.java.version>5.1.47</mysql.connector.java.version>
         <mybatis.spring.boot.starter.version>2.2.0</mybatis.spring.boot.starter.version>
         <druid.spring.boot.starter.version>1.1.10</druid.spring.boot.starter.version>
@@ -24,12 +25,15 @@
         <lombok.version>1.18.18</lombok.version>
         <log4j2.version>2.25.3</log4j2.version>
         <swagger.spring.boot.starter.version>1.9.1.RELEASE</swagger.spring.boot.starter.version>
-        <validation.api.version>1.1.0.Final</validation.api.version>
+        <validation.api.version>2.0.1.Final</validation.api.version>
+        <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
         <jackson.version>2.12.0</jackson.version>
         <commons.lang3.version>3.11</commons.lang3.version>
         <poi.version>5.0.0</poi.version>
         <jasypt.spring.boot.starter.version>3.0.5</jasypt.spring.boot.starter.version>
         <redisson.spring.boot.starter.version>3.15.6</redisson.spring.boot.starter.version>
+        <spring.cloud.starter.alibaba.sentinel.version>2021.1</spring.cloud.starter.alibaba.sentinel.version>
+        <sentinel.datasource.nacos.version>1.8.7</sentinel.datasource.nacos.version>
     </properties>
 
     <!--spring cloud dependencies-->
@@ -39,6 +43,13 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring.cloud.dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring.cloud.alibaba.dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -85,6 +96,25 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+
+        <!-- Nacos config -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <!-- Nacos discovery -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <!-- spring-cloud-sentinel -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+            <version>${spring.cloud.starter.alibaba.sentinel.version}</version>
         </dependency>
 
         <!--mysql连接驱动-->
@@ -158,6 +188,20 @@
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <version>${validation.api.version}</version>
+        </dependency>
+
+        <!--hibernate-validator-->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.version}</version>
+        </dependency>
+
+        <!--sentinel-datasource-nacos-->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-datasource-nacos</artifactId>
+            <version>${sentinel.datasource.nacos.version}</version>
         </dependency>
 
         <!--jackson-->
