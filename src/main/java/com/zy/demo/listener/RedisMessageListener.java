@@ -1,5 +1,6 @@
 package com.zy.demo.listener;
 
+import com.zy.demo.annotation.LogAspectPointcut;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
@@ -15,7 +16,9 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @Component
 public class RedisMessageListener implements MessageListener {
+
     @Override
+    @LogAspectPointcut
     public void onMessage(Message message, byte[] bytes) {
         //实际主题名称
         String channel = new String(message.getChannel(), StandardCharsets.UTF_8);

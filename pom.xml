@@ -17,6 +17,7 @@
     <properties>
         <java.version>1.8</java.version>
         <spring.cloud.dependencies.version>2020.0.5</spring.cloud.dependencies.version>
+        <spring.cloud.alibaba.dependencies.version>2021.0.5.0</spring.cloud.alibaba.dependencies.version>
         <mysql.connector.java.version>5.1.47</mysql.connector.java.version>
         <mybatis.spring.boot.starter.version>2.2.0</mybatis.spring.boot.starter.version>
         <druid.spring.boot.starter.version>1.1.10</druid.spring.boot.starter.version>
@@ -24,12 +25,17 @@
         <lombok.version>1.18.18</lombok.version>
         <log4j2.version>2.25.3</log4j2.version>
         <swagger.spring.boot.starter.version>1.9.1.RELEASE</swagger.spring.boot.starter.version>
-        <validation.api.version>1.1.0.Final</validation.api.version>
+        <validation.api.version>2.0.1.Final</validation.api.version>
+        <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
         <jackson.version>2.12.0</jackson.version>
         <commons.lang3.version>3.11</commons.lang3.version>
         <poi.version>5.0.0</poi.version>
         <jasypt.spring.boot.starter.version>3.0.5</jasypt.spring.boot.starter.version>
         <redisson.spring.boot.starter.version>3.15.6</redisson.spring.boot.starter.version>
+        <spring.cloud.starter.alibaba.sentinel.version>2021.1</spring.cloud.starter.alibaba.sentinel.version>
+        <sentinel.datasource.nacos.version>1.8.7</sentinel.datasource.nacos.version>
+        <gatling-maven-plugin.version>3.1.2</gatling-maven-plugin.version>
+        <gatling.version>3.6.1</gatling.version>
     </properties>
 
     <!--spring cloud dependencies-->
@@ -39,6 +45,13 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring.cloud.dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring.cloud.alibaba.dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -75,10 +88,35 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!--AOP-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <!--bootstrap-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+
+        <!-- Nacos config -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <!-- Nacos discovery -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <!-- spring-cloud-sentinel -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+            <version>${spring.cloud.starter.alibaba.sentinel.version}</version>
         </dependency>
 
         <!--mysql连接驱动-->
@@ -154,6 +192,20 @@
             <version>${validation.api.version}</version>
         </dependency>
 
+        <!--hibernate-validator-->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.version}</version>
+        </dependency>
+
+        <!--sentinel-datasource-nacos-->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-datasource-nacos</artifactId>
+            <version>${sentinel.datasource.nacos.version}</version>
+        </dependency>
+
         <!--jackson-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -215,6 +267,14 @@
             <version>${redisson.spring.boot.starter.version}</version>
         </dependency>
 
+        <!--gatling-->
+        <dependency>
+            <groupId>io.gatling.highcharts</groupId>
+            <artifactId>gatling-charts-highcharts</artifactId>
+            <version>${gatling.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -225,20 +285,22 @@
                 <configuration>
                     <!-- 配置JVM参数，本地调试 -->
                     <jvmArguments>
-                        <!--初始堆内存-->
-                        -Xms256m
-                        <!--最大堆内存-->
-                        -Xmx256m
-                        <!--新生代内存-->
-                        -Xmn128m
-                        <!--元空间内存，达到后触发fullGC-->
-                        -XX:MetaspaceSize=128m
+                        <!--初始堆内存-XX:InitialHeapSize-->
+                        -Xms8G
+                        <!--最大堆内存-XX:MaxHeapSize-->
+                        -Xmx8G
+                        <!--新生代内存-XX:MaxNewSize=-XX:NewSize-->
+                        -Xmn4G
+                        <!--线程栈大小-XX:ThreadStackSize-->
+                        -Xss2M
+                        <!--元空间内存-->
+                        -XX:MetaspaceSize=256m
                         <!--元空间最大内存-->
-                        -XX:MaxMetaspaceSize=128m
+                        -XX:MaxMetaspaceSize=512m
                         <!--OOM时自动生成堆转储文件-->
                         -XX:+HeapDumpOnOutOfMemoryError
                         <!--堆转储文件的路径-->
-                        -XX:HeapDumpPath=C:/Users/zy/Desktop/oom_dump.hprof
+                        -XX:HeapDumpPath=E:/Java/jvm-dump/oom_dump.hprof
                         <!--young gc/full gc发生时，输出详细的内存回收日志-->
                         -XX:+PrintGCDetails
                         <!--输出GC发生时JVM已经启动的时间，单位秒-->
@@ -251,6 +313,13 @@
                         <!-- -XX:+UseG1GC-->
                     </jvmArguments>
                 </configuration>
+            </plugin>
+
+            <!--gatling-->
+            <plugin>
+                <groupId>io.gatling</groupId>
+                <artifactId>gatling-maven-plugin</artifactId>
+                <version>${gatling-maven-plugin.version}</version>
             </plugin>
         </plugins>
     </build>

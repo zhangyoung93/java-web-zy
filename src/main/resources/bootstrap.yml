@@ -1,12 +1,14 @@
-#spring:
-#  cloud:
-#    nacos:
-#      config:
-#        enabled: ${NACOS_ENABLED:false}
-#        namespace: ${NACOS_NAMESPACE:}
-#        file-extension: yml
-#        server-addr: ${NACOS_ADDR:localhost:8848}
-#      discovery:
-#        enabled: ${NACOS_ENABLED:true}
-#        namespace: ${NACOS_NAMESPACE:}
-#        server-addr: ${NACOS_ADDR:localhost:8848}
+spring:
+  application:
+    name: java-web-zy
+  cloud:
+    nacos:
+      config:
+        enabled: true
+        namespace: namespace-zy
+        file-extension: yml
+        server-addr: localhost:8848
+      discovery:
+        enabled: true
+        namespace: namespace-zy
+        server-addr: localhost:8848

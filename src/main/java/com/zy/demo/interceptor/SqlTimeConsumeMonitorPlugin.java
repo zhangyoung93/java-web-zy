@@ -1,6 +1,6 @@
 package com.zy.demo.interceptor;
 
-import com.zy.demo.config.MybatisPluginConfiguration;
+import com.zy.demo.config.MybatisPluginProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
@@ -40,7 +40,16 @@ import java.util.Properties;
 })
 public class SqlTimeConsumeMonitorPlugin implements Interceptor {
 
-    private MybatisPluginConfiguration mybatisPluginConfiguration;
+    private MybatisPluginProperties mybatisPluginProperties;
+
+    /**
+     * set注入插件配置依赖
+     *
+     * @param mybatisPluginProperties mybatisPluginProperties
+     */
+    public void setMybatisPluginProperties(MybatisPluginProperties mybatisPluginProperties) {
+        this.mybatisPluginProperties = mybatisPluginProperties;
+    }
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -50,7 +59,7 @@ public class SqlTimeConsumeMonitorPlugin implements Interceptor {
         String sqlType = ms.getSqlCommandType().name();
         long startTime = System.currentTimeMillis();
         //慢执行阈值
-        int threshold = this.mybatisPluginConfiguration.getSqlCostTimeThreshold();
+        int threshold = this.mybatisPluginProperties.getSqlCostTimeThreshold();
         try {
             return invocation.proceed();
         } finally {
@@ -71,14 +80,5 @@ public class SqlTimeConsumeMonitorPlugin implements Interceptor {
     @Override
     public void setProperties(Properties properties) {
 
-    }
-
-    /**
-     * set注入插件配置依赖
-     *
-     * @param mybatisPluginConfiguration MybatisPluginConfiguration
-     */
-    public void setMybatisPluginConfiguration(MybatisPluginConfiguration mybatisPluginConfiguration) {
-        this.mybatisPluginConfiguration = mybatisPluginConfiguration;
     }
 }

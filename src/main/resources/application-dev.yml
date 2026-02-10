@@ -5,18 +5,20 @@ spring:
     password: ENC(k5IohO2XLuAhwRbqdoQXc1Ab09Of3yQF)
   #redis配置
   redis:
-    #单机模式
-    url: redis://localhost:6379
+    #单机模式，url解析有bug，改成host和port解析
+    #url: "redis://127.0.0.1:6379"
     password: ENC(TUjeJQU0g3pGZqbYlDw8mHilUTdV+M1XlYZGeBc7WYg=)
     timeout: 100000ms
-    #哨兵模式
-    sentinel:
-      #主节点名称
-      master: mymaster
-      #所有节点列表
-      nodes: 127.0.0.1:26379,127.0.0.1:26380,127.0.0.1:26381
-      #主从节点互相认证的密码，保持一致
-      password: ENC(TUjeJQU0g3pGZqbYlDw8mHilUTdV+M1XlYZGeBc7WYg=)
+    host: 127.0.0.1
+    port: 6379
+#    #哨兵模式
+#    sentinel:
+#      #主节点名称
+#      master: mymaster
+#      #所有节点列表
+#      nodes: 127.0.0.1:26379,127.0.0.1:26380,127.0.0.1:26381
+#      #主从节点互相认证的密码，保持一致
+#      password: ENC(TUjeJQU0g3pGZqbYlDw8mHilUTdV+M1XlYZGeBc7WYg=)
 #    #集群模式
 #    cluster:
 #      #所有节点列表
@@ -29,6 +31,8 @@ redisson:
   enable: true
   #redisson的模式（single/sentinel/cluster）
   mode: single
+  #single模式下的url
+  url: "redis://127.0.0.1:6379"
 
 #/swagger-ui.html
 swagger:

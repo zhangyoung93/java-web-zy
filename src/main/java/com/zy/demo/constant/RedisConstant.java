@@ -65,4 +65,9 @@ public class RedisConstant {
      * 支付业务锁
      */
     public static final String BIZ_PAY_LOCK_KEY = "biz:pay:lock:";
+
+    /**
+     * 接口幂等
+     */
+    public static final String IDEMPOTENT_KEY = "idempotent:";
 }

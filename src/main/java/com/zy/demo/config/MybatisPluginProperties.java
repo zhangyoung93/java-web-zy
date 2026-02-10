@@ -1,7 +1,6 @@
 package com.zy.demo.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * Mybatis插件配置
@@ -9,8 +8,7 @@ import org.springframework.stereotype.Component;
  * @author zy
  */
 @ConfigurationProperties(prefix = "mybatis.plugin")
-@Component
-public class MybatisPluginConfiguration {
+public class MybatisPluginProperties {
 
     /**
      * sql耗时阈值，单位毫秒

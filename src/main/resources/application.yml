@@ -88,6 +88,51 @@ spring:
   aop:
     #Spring动态代理方式：springboot2.X后默认是CGLIB(true)
     proxy-target-class: true
+  messages:
+    #国际化配置路径及文件名称前缀
+    basename: i18n/messages
+    #配置文件编码
+    encoding: UTF-8
+    #缓存刷新时间
+    cache-duration: 3600s
+    #关闭系统默认规则，优先使用项目配置
+    fallback-to-system-locale: false
+
+  cloud:
+    #sentinel
+    sentinel:
+      #开关
+      enabled: true
+      #控制台连接配置
+      transport:
+        #控制台地址
+        dashboard: localhost:8081
+        #客户端与控制台通信的端口（默认8719，若端口被占用会自动递增）
+        port: 8719
+      #规则持久化配置（生产级：对接Nacos，避免重启丢失规则）
+      datasource:
+        #流量控制规则
+        flow:
+          nacos:
+            namespace: ${spring.cloud.nacos.config.namespace}
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            data-id: ${spring.application.name}-flow-rules
+            data-type: json
+            group-id: DEFAULT_GROUP
+            rule-type: flow
+#        #熔断降级规则
+#        degrade:
+#          nacos:
+#            namespace: namespace-zy
+#            server-addr: localhost:8848
+#            data-id: java-web-zy-degrade-rules
+#            group-id: DEFAULT_GROUP
+#            rule-type: degrade
+#            data-type: json
+##            username: nacos
+##            password: nacos
+      #关闭懒加载（项目启动即连接控制台，默认是false，首次请求后才注册）
+      eager: true
   #jackson配置
   jackson:
     #序列化
@@ -196,6 +241,23 @@ management:
     ldap:
       enabled: false
 
+web:
+  mvc:
+    #接口签名拦截
+    sign:
+      #签名密钥，暂时写在配置文件里。生产环境每个应用对应一个密钥。
+      secret: PQkhbohRGGsb5vvhDObEOear3Qt2D2VLF-9N2tRvOOw
+      #拦截路径
+      include-paths:
+        - /batch/data
+    #接口幂等拦截
+    idempotent:
+      #幂等有效期。单位：秒。默认3600。
+      valid-time: 3600
+      #拦截路径（路径 + 幂等判断字段）
+      include-paths:
+        /batch/data: mobile
+
 #mybatis
 mybatis:
   #mapper文件路径
@@ -211,6 +273,11 @@ mybatis:
   plugin:
     #sql耗时阈值，单位毫秒
     sql-cost-time-threshold: 2000
+
+#redisson
+redisson:
+  #是否覆盖自动配置，手动注册Bean
+  enable: true
 
 #分页插件
 pagehelper:

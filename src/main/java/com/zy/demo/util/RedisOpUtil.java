@@ -66,6 +66,26 @@ public class RedisOpUtil {
         return false;
     }
 
+    /**
+     * 原子性赋值
+     *
+     * @param key      key
+     * @param value    value
+     * @param timeout  存活期
+     * @param timeUnit 存活期单位
+     * @return boolean
+     */
+    public boolean setIfAbsent(String key, Object value, long timeout, TimeUnit timeUnit) {
+        Assert.hasText(key, "key must not be empty!");
+        Boolean result = false;
+        try {
+            result = this.redisTemplate.opsForValue().setIfAbsent(key, value, timeout, timeUnit);
+        } catch (Exception e) {
+            log.error("Redis-set操作异常", e);
+        }
+        return Boolean.TRUE.equals(result);
+    }
+
     public Object getValue(String key) {
         Assert.hasText(key, "key must not be empty!");
         Object object = null;
@@ -79,13 +99,13 @@ public class RedisOpUtil {
 
     public boolean hasKey(String key) {
         Assert.hasText(key, "key must not be empty!");
-        Boolean hasKey = false;
+        boolean hasKey = false;
         try {
             hasKey = this.redisTemplate.hasKey(key);
         } catch (Exception e) {
             log.error("Redis-hasKey操作异常", e);
         }
-        return Optional.ofNullable(hasKey).orElse(false);
+        return hasKey;
     }
 
     public Long incr(String key) {
