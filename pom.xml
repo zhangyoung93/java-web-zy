@@ -34,6 +34,8 @@
         <redisson.spring.boot.starter.version>3.15.6</redisson.spring.boot.starter.version>
         <spring.cloud.starter.alibaba.sentinel.version>2021.1</spring.cloud.starter.alibaba.sentinel.version>
         <sentinel.datasource.nacos.version>1.8.7</sentinel.datasource.nacos.version>
+        <gatling-maven-plugin.version>3.1.2</gatling-maven-plugin.version>
+        <gatling.version>3.6.1</gatling.version>
     </properties>
 
     <!--spring cloud dependencies-->
@@ -265,6 +267,14 @@
             <version>${redisson.spring.boot.starter.version}</version>
         </dependency>
 
+        <!--gatling-->
+        <dependency>
+            <groupId>io.gatling.highcharts</groupId>
+            <artifactId>gatling-charts-highcharts</artifactId>
+            <version>${gatling.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -303,6 +313,13 @@
                         <!-- -XX:+UseG1GC-->
                     </jvmArguments>
                 </configuration>
+            </plugin>
+
+            <!--gatling-->
+            <plugin>
+                <groupId>io.gatling</groupId>
+                <artifactId>gatling-maven-plugin</artifactId>
+                <version>${gatling-maven-plugin.version}</version>
             </plugin>
         </plugins>
     </build>
