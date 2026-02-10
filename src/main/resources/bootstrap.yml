@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: java-web-zy
   cloud:
     nacos:
       config:

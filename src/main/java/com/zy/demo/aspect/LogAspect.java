@@ -31,7 +31,6 @@ public class LogAspect {
      */
     @Before("pointcut()")
     public void before() {
-        log.info("LogAspect-before");
     }
 
     /**
@@ -41,7 +40,6 @@ public class LogAspect {
      */
     @AfterReturning(value = "pointcut()", returning = "result")
     public void afterReturning(Object result) {
-        log.info("LogAspect-afterReturning,result={}", result);
     }
 
     /**
@@ -51,7 +49,6 @@ public class LogAspect {
      */
     @AfterThrowing(value = "pointcut()", throwing = "e")
     public void afterThrowing(Throwable e) {
-        log.error("LogAspect-afterThrowing,throw={}", e.toString());
     }
 
     /**
@@ -59,7 +56,6 @@ public class LogAspect {
      */
     @After("pointcut()")
     public void after() {
-        log.info("LogAspect-after");
     }
 
     /**

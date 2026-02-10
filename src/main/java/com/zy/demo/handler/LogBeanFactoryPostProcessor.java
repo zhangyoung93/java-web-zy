@@ -27,8 +27,5 @@ public class LogBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
     public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
         log.info("BeanFactory已经实例化，即将加载的Bean如下：");
         Iterator<String> iterator = configurableListableBeanFactory.getBeanNamesIterator();
-        while (iterator.hasNext()) {
-            log.info(iterator.next());
-        }
     }
 }

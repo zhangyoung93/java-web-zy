@@ -1,0 +1,30 @@
+[
+  {
+    //资源名(对应@SentinelResource的value)
+    "resource": "batchDataApi",
+
+    //来源应用：default=所有应用，可指定具体应用名
+    "limitApp": "default",
+
+    //限流阈值类型：1=QPS限流，0=线程数限流
+    "grade": 1,
+
+    //阈值：每秒最多5次请求
+    "count": 5,
+
+    //限流策略：0=直接限流(默认)，1=关联限流，2=链路限流
+    "strategy": 0,
+
+    //流控效果：0=快速失败(默认)，1=预热，2=排队等待
+    "controlBehavior": 0,
+
+    //预热时间(仅controlBehavior=1时生效)：10秒
+    "warmUpPeriodSec": 10,
+
+    //排队等待时间(仅controlBehavior=2时生效)：500ms
+    "maxQueueingTimeMs": 500,
+
+    //是否集群限流：false=单机(默认)，true=分布式集群
+    "clusterMode": false
+  }
+]

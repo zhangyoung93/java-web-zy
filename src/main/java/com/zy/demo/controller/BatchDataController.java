@@ -19,7 +19,6 @@ import java.util.List;
  * @author zy
  */
 @Slf4j
-@SentinelResource(value = "batchDataApi")
 @RestController
 @RequestMapping("/batch/data")
 public class BatchDataController {
@@ -31,11 +30,13 @@ public class BatchDataController {
     }
 
     /**
-     * 前置拦截器：
-     * 1、接口验签
-     * 2、幂等校验
+     * 前置拦截：
+     * 1、流量控制
+     * 2、接口验签
+     * 3、幂等校验
      */
     @PostMapping("/save/user")
+    @SentinelResource(value = "batchDataApi")
     public ResponseEntity<Object> saveUser(@RequestBody List<UserDto> userDtoList) {
         BaseResponse<Object> baseResponse = BaseResponse.success(null);
         try {
