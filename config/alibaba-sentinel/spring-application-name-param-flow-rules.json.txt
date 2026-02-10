@@ -1,0 +1,21 @@
+[
+    {
+        //资源名称
+        "resource": "testApi",
+
+        //资源对应方法的参数索引，0表示第一个参数。
+        "paramIdx": 0,
+
+        //限流阈值。10次。
+        "count": 10,
+
+        //特殊参数值的限流策略
+        "paramFlowItemList": [
+            {
+                "object": "VIP",
+                "classType": "java.lang.String",
+                "count": 1000
+            }
+        ]
+    }
+]
