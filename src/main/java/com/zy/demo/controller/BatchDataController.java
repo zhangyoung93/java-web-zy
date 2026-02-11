@@ -1,6 +1,7 @@
 package com.zy.demo.controller;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.zy.demo.handler.SentinelBlockHandler;
 import com.zy.demo.pojo.BaseResponse;
 import com.zy.demo.pojo.UserDto;
 import com.zy.demo.service.BatchDataService;
@@ -36,7 +37,7 @@ public class BatchDataController {
      * 3、幂等校验
      */
     @PostMapping("/save/user")
-    @SentinelResource(value = "batchDataApi")
+    @SentinelResource(value = "batchDataApi", blockHandlerClass = SentinelBlockHandler.class, blockHandler = "blockHandler")
     public ResponseEntity<Object> saveUser(@RequestBody List<UserDto> userDtoList) {
         BaseResponse<Object> baseResponse = BaseResponse.success(null);
         try {
