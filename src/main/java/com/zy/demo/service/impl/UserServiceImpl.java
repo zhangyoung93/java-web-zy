@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
 import com.zy.demo.dao.mysql.IdUserBaseMapper;
+import com.zy.demo.feign.AuthServer;
 import com.zy.demo.model.IdUserBase;
 import com.zy.demo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +30,12 @@ public class UserServiceImpl implements UserService {
 
     private final SqlSessionFactory sqlSessionFactory;
 
-    public UserServiceImpl(IdUserBaseMapper idUserBaseMapper, SqlSessionFactory sqlSessionFactory) {
+    private final AuthServer authServer;
+
+    public UserServiceImpl(IdUserBaseMapper idUserBaseMapper, SqlSessionFactory sqlSessionFactory, AuthServer authServer) {
         this.idUserBaseMapper = idUserBaseMapper;
         this.sqlSessionFactory = sqlSessionFactory;
+        this.authServer = authServer;
     }
 
     @Override
@@ -84,5 +88,10 @@ public class UserServiceImpl implements UserService {
         insertRows = this.idUserBaseMapper.insertBatch(idUserBaseList);
         log.info("insertRows={}", insertRows);
         return insertRows;
+    }
+
+    @Override
+    public boolean checkUserAuth(Long userId, Integer authType) {
+        return this.authServer.checkUserAuth(userId, authType);
     }
 }

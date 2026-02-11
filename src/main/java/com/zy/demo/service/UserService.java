@@ -28,4 +28,13 @@ public interface UserService {
      * @return int
      */
     int batchInsertUser(List<IdUserBase> idUserBaseList);
+
+    /**
+     * 查询用户是否有指定权限
+     *
+     * @param userId   用户ID
+     * @param authType 指定权限
+     * @return boolean
+     */
+    boolean checkUserAuth(Long userId, Integer authType);
 }
