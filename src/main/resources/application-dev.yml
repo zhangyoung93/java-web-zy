@@ -37,3 +37,7 @@ redisson:
 #/swagger-ui.html
 swagger:
   enabled: true
+
+feign:
+  url:
+    auth: http://localhost:8082

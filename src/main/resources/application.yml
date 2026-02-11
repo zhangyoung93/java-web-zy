@@ -259,6 +259,18 @@ management:
     ldap:
       enabled: false
 
+#openfeign连接配置
+feign:
+  client:
+    config:
+      default:
+        #连接服务超时
+        connectTimeout: 5000
+        #读取服务超时
+        readTimeout: 8000
+        #日志级别：所有
+        loggerLevel: full
+
 web:
   mvc:
     #接口签名拦截
