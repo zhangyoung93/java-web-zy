@@ -1,0 +1,12 @@
+[
+    {
+        //资源名称
+        "resource": "batchDataApi",
+
+        //限制应用名称
+        "limitApp": "gateway",
+
+        //策略(白名单：0，只允许限制应用访问/黑名单：1，禁止限制应用访问)
+        "strategy": 0
+    }
+]
