@@ -1,13 +1,12 @@
 package com.zy.demo.handler;
 
+import org.springframework.http.MediaType;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -107,6 +106,9 @@ public class CacheResponseWrapper extends HttpServletResponseWrapper {
      */
     public void writeToResponse() throws IOException {
         HttpServletResponse response = (HttpServletResponse) getResponse();
+        response.setContentType(MediaType.APPLICATION_JSON.toString());
+        response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+        response.setStatus(HttpServletResponse.SC_OK);
         try (ServletOutputStream sos = response.getOutputStream()) {
             sos.write(getCacheAsBytes());
             sos.flush();

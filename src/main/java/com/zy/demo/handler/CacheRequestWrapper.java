@@ -1,5 +1,8 @@
 package com.zy.demo.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.MediaType;
+
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +25,7 @@ public class CacheRequestWrapper extends HttpServletRequestWrapper {
      */
     private final byte[] body;
 
-    public CacheRequestWrapper(HttpServletRequest request) throws IOException {
+    public CacheRequestWrapper(HttpServletRequest request, ObjectMapper objectMapper) throws IOException {
         super(request);
         //读取原始请求体
         StringBuilder sb = new StringBuilder();
@@ -32,8 +35,16 @@ public class CacheRequestWrapper extends HttpServletRequestWrapper {
                 sb.append(line);
             }
         }
+        byte[] bytes;
+        if (request.getContentType().contains(MediaType.APPLICATION_JSON_VALUE)) {
+            //格式化JSON，去掉空白
+            Object json = objectMapper.readValue(sb.toString(), Object.class);
+            bytes = objectMapper.writeValueAsString(json).getBytes(StandardCharsets.UTF_8);
+        } else {
+            bytes = sb.toString().getBytes(StandardCharsets.UTF_8);
+        }
         //初始化body
-        this.body = sb.toString().getBytes(StandardCharsets.UTF_8);
+        this.body = bytes;
     }
 
     /**

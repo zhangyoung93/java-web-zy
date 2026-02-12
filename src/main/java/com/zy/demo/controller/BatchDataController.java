@@ -15,7 +15,6 @@ import java.util.List;
 
 /**
  * 保存批量数据接口
- * 添加流控、熔断
  *
  * @author zy
  */
@@ -32,9 +31,11 @@ public class BatchDataController {
 
     /**
      * 前置拦截：
-     * 1、流量控制
-     * 2、接口验签
-     * 3、幂等校验
+     * 1、接口验签
+     * 2、幂等校验
+     * 3、流量控制
+     * 4、熔断降级
+     * 5、权限控制
      */
     @PostMapping("/save/user")
     @SentinelResource(value = "batchDataApi", blockHandlerClass = SentinelBlockHandler.class, blockHandler = "blockHandler")

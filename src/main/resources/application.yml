@@ -288,14 +288,15 @@ web:
       secret: PQkhbohRGGsb5vvhDObEOear3Qt2D2VLF-9N2tRvOOw
       #拦截路径
       include-paths:
-        - /batch/data
+        - "/batch/data/**"
     #接口幂等拦截
     idempotent:
       #幂等有效期。单位：秒。默认3600。
       valid-time: 3600
-      #拦截路径（路径 + 幂等判断字段）
-      include-paths:
-        /batch/data: mobile
+      #拦截规则（请求路径 + 幂等判断字段）
+      idempotent-rule-list:
+        - path: "/batch/data/save/user"
+          field: "mobile"
 
 #mybatis
 mybatis:

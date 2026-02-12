@@ -6,9 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Web MVC配置
@@ -32,13 +31,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        //注册接口验签拦截
+        //注册验签拦截
         registry.addInterceptor(this.signInterceptor)
                 .addPathPatterns(this.webMvcProperties.getSign().getIncludePaths());
-        //注册接口幂等拦截
-        Set<String> set = this.webMvcProperties.getIdempotent().getIncludePaths().keySet();
-        List<String> list = new ArrayList<>(set);
-        registry.addInterceptor(this.idempotentInterceptor)
-                .addPathPatterns(list);
+        //注册幂等拦截
+        List<String> list = this.webMvcProperties.getIdempotent().getIdempotentRuleList().stream().map(WebMvcProperties.IdempotentRule::getPath).distinct().collect(Collectors.toList());
+        registry.addInterceptor(this.idempotentInterceptor).addPathPatterns(list);
     }
 }

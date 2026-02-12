@@ -4,7 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Web MVC 属性
@@ -62,7 +61,7 @@ public class WebMvcProperties {
 
         private int validTime = 3600;
 
-        private Map<String, String> includePaths;
+        private List<IdempotentRule> idempotentRuleList;
 
         public int getValidTime() {
             return validTime;
@@ -72,12 +71,38 @@ public class WebMvcProperties {
             this.validTime = validTime;
         }
 
-        public Map<String, String> getIncludePaths() {
-            return includePaths;
+        public List<IdempotentRule> getIdempotentRuleList() {
+            return idempotentRuleList;
         }
 
-        public void setIncludePaths(Map<String, String> includePaths) {
-            this.includePaths = includePaths;
+        public void setIdempotentRuleList(List<IdempotentRule> idempotentRuleList) {
+            this.idempotentRuleList = idempotentRuleList;
+        }
+    }
+
+    /**
+     * 幂等规则
+     */
+    public static class IdempotentRule {
+
+        String path;
+
+        String field;
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public String getField() {
+            return field;
+        }
+
+        public void setField(String field) {
+            this.field = field;
         }
     }
 }
