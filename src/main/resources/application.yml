@@ -121,6 +121,8 @@ spring:
             data-id: ${spring.application.name}-flow-rules
             data-type: json
             group-id: DEFAULT_GROUP
+            username: ${spring.cloud.nacos.username}
+            password: ${spring.cloud.nacos.password}
             rule-type: flow
         #熔断降级规则
         degrade:
@@ -130,6 +132,8 @@ spring:
             data-id: ${spring.application.name}-degrade-rules
             data-type: json
             group-id: DEFAULT_GROUP
+            username: ${spring.cloud.nacos.username}
+            password: ${spring.cloud.nacos.password}
             rule-type: degrade
         #系统保护规则
         system:
@@ -139,6 +143,8 @@ spring:
             data-id: ${spring.application.name}-system-rules
             data-type: json
             group-id: DEFAULT_GROUP
+            username: ${spring.cloud.nacos.username}
+            password: ${spring.cloud.nacos.password}
             rule-type: system
         #参数限流规则
         param-flow:
@@ -148,8 +154,20 @@ spring:
             data-id: ${spring.application.name}-param-flow-rules
             data-type: json
             group-id: DEFAULT_GROUP
+            username: ${spring.cloud.nacos.username}
+            password: ${spring.cloud.nacos.password}
             rule-type: param_flow
-
+        #应用授权规则
+        authority:
+          nacos:
+            namespace: ${spring.cloud.nacos.config.namespace}
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            data-id: ${spring.application.name}-authority-rules
+            data-type: json
+            group-id: DEFAULT_GROUP
+            username: ${spring.cloud.nacos.username}
+            password: ${spring.cloud.nacos.password}
+            rule-type: authority
 
   #jackson配置
   jackson:
@@ -279,14 +297,15 @@ web:
       secret: PQkhbohRGGsb5vvhDObEOear3Qt2D2VLF-9N2tRvOOw
       #拦截路径
       include-paths:
-        - /batch/data
+        - "/batch/data/**"
     #接口幂等拦截
     idempotent:
       #幂等有效期。单位：秒。默认3600。
       valid-time: 3600
-      #拦截路径（路径 + 幂等判断字段）
-      include-paths:
-        /batch/data: mobile
+      #拦截规则（请求路径 + 幂等判断字段）
+      idempotent-rule-list:
+        - path: "/batch/data/save/user"
+          field: "mobile"
 
 #mybatis
 mybatis:

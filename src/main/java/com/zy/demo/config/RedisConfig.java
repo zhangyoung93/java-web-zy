@@ -119,7 +119,11 @@ public class RedisConfig {
             case "single":
                 config.useSingleServer().setAddress(redissonProperties.getUrl())
                         .setPassword(redisProperties.getPassword())
-                        .setDatabase(redisProperties.getDatabase());
+                        .setDatabase(redisProperties.getDatabase())
+                        .setTimeout(5000)
+                        .setPingConnectionInterval(30000)
+                        .setRetryAttempts(3)
+                        .setConnectionPoolSize(64);
                 break;
             case "sentinel":
                 nodeList = redisProperties.getSentinel().getNodes();

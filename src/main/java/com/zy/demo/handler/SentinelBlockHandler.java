@@ -1,6 +1,9 @@
 package com.zy.demo.handler;
 
 import com.alibaba.csp.sentinel.slots.block.BlockException;
+import com.alibaba.csp.sentinel.slots.block.authority.AuthorityException;
+import com.alibaba.csp.sentinel.slots.block.authority.AuthorityRule;
+import com.alibaba.csp.sentinel.slots.block.authority.AuthorityRuleManager;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeException;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager;
@@ -55,14 +58,25 @@ public class SentinelBlockHandler {
                 msg.append("-1");
             }
         } else if (e instanceof SystemBlockException) {
+            //系统保护
             msg.append("系统负载过高，请稍后再试。阈值=");
             double cpuUsageThreshold = SystemRuleManager.getCpuUsageThreshold();
             msg.append(cpuUsageThreshold);
         } else if (e instanceof ParamFlowException) {
-            msg.append("热点参数限流，请稍后再试。\"阈值=");
+            //参数限流
+            msg.append("热点参数限流，请稍后再试。阈值=");
             ParamFlowRule paramFlowRule = ParamFlowRuleManager.getRules().stream().filter(rule -> resource.equals(rule.getResource())).findFirst().orElse(null);
             if (paramFlowRule != null) {
                 msg.append(paramFlowRule.getCount());
+            } else {
+                msg.append("=1");
+            }
+        } else if (e instanceof AuthorityException) {
+            //应用授权
+            msg.append("黑/白名单拦截，请通过正常渠道访问。阈值=");
+            AuthorityRule authorityRule = AuthorityRuleManager.getRules().stream().filter(rule -> resource.equals(rule.getResource())).findFirst().orElse(null);
+            if (authorityRule != null) {
+                msg.append(authorityRule.getLimitApp());
             } else {
                 msg.append("=1");
             }
