@@ -1,4 +1,10 @@
 spring:
+  cloud:
+    nacos:
+      config:
+        enabled: false
+      discovery:
+        enabled: false
   datasource:
     url: jdbc:mysql://localhost:3306/zy?characterEncoding=utf8&useOldAliasMetadataBehavior=true&autoReconnect=true&useSSL=false&serverTimezone=UTC
     username: ENC(k5IohO2XLuAhwRbqdoQXc1Ab09Of3yQF)

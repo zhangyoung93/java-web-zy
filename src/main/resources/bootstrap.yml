@@ -3,6 +3,8 @@ spring:
     name: java-web-zy
   cloud:
     nacos:
+      username: nacos
+      password: nacos
       config:
         enabled: true
         namespace: namespace-zy
