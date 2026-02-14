@@ -1,6 +1,7 @@
 package com.zy.demo.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 
 import javax.servlet.ReadListener;
@@ -36,7 +37,8 @@ public class CacheRequestWrapper extends HttpServletRequestWrapper {
             }
         }
         byte[] bytes;
-        if (request.getContentType().contains(MediaType.APPLICATION_JSON_VALUE)) {
+        String contentType = request.getContentType();
+        if (StringUtils.isNotBlank(contentType) && contentType.contains(MediaType.APPLICATION_JSON_VALUE)) {
             //格式化JSON，去掉空白
             Object json = objectMapper.readValue(sb.toString(), Object.class);
             bytes = objectMapper.writeValueAsString(json).getBytes(StandardCharsets.UTF_8);
