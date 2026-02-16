@@ -1,5 +1,6 @@
 package com.zy.demo.pojo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.zy.demo.constant.ResponseEnum;
 
 /**
@@ -14,6 +15,7 @@ public class BaseResponse<T> {
     // 描述
     private String msg;
     // 数据
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 
     public String getCode() {
