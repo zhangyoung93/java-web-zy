@@ -36,6 +36,7 @@
         <sentinel.datasource.nacos.version>1.8.7</sentinel.datasource.nacos.version>
         <gatling-maven-plugin.version>3.1.2</gatling-maven-plugin.version>
         <gatling.version>3.6.1</gatling.version>
+        <shardingsphere-jdbc.version>5.5.0</shardingsphere-jdbc.version>
     </properties>
 
     <!--spring cloud dependencies-->
@@ -266,10 +267,28 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+
         <!-- redis连接池（适用于jedis、lettuce） -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
+        </dependency>
+
+        <!-- shardingSphere -->
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-jdbc</artifactId>
+            <version>${shardingsphere-jdbc.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.shardingsphere</groupId>
+                    <artifactId>shardingsphere-test-util</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--Redisson-->

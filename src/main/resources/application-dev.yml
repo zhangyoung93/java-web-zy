@@ -5,10 +5,6 @@ spring:
         enabled: false
       discovery:
         enabled: false
-  datasource:
-    url: jdbc:mysql://localhost:3306/zy?characterEncoding=utf8&useOldAliasMetadataBehavior=true&autoReconnect=true&useSSL=false&serverTimezone=UTC
-    username: ENC(k5IohO2XLuAhwRbqdoQXc1Ab09Of3yQF)
-    password: ENC(k5IohO2XLuAhwRbqdoQXc1Ab09Of3yQF)
   #redis配置
   redis:
     #单机模式，url解析有bug，改成host和port解析

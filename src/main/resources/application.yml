@@ -183,12 +183,16 @@ spring:
       #单个文件最大值。默认1MB
       max-file-size: 10MB
   datasource:
-    #集成druid连接池
-    type: com.alibaba.druid.pool.DruidDataSource
+#    #========== shardingSphere driver ==========
+#    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+#    url: jdbc:shardingsphere:classpath:sharding-sphere.yaml
+
+    #========== mysql driver ==========
     driver-class-name: com.mysql.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/zy?characterEncoding=utf8&useOldAliasMetadataBehavior=true&autoReconnect=true&useSSL=false&serverTimezone=UTC
-#    username: ENC(k5IohO2XLuAhwRbqdoQXc1Ab09Of3yQF)
-#    password: ENC(k5IohO2XLuAhwRbqdoQXc1Ab09Of3yQF)
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/zy?characterEncoding=utf8&useOldAliasMetadataBehavior=true&autoReconnect=true&useSSL=false&serverTimezone=UTC
+    username: ENC(k5IohO2XLuAhwRbqdoQXc1Ab09Of3yQF)
+    password: ENC(k5IohO2XLuAhwRbqdoQXc1Ab09Of3yQF)
     druid:
       # 初始化连接数（默认0，建议5-10）
       initial-size: 5
@@ -203,7 +207,7 @@ spring:
       # 连接最小生存时间（毫秒）
       min-evictable-idle-time-millis: 300000
       # 验证连接有效性的 SQL（MySQL 专用）
-      validation-query: SELECT 1 FROM DUAL
+      validation-query: SELECT 1
       # 空闲时检测连接有效性（必须开启，避免失效连接）
       test-while-idle: true
       # 申请连接时不检测（提升性能）
@@ -216,12 +220,7 @@ spring:
       max-pool-prepared-statement-per-connection-size: 20
       # 启用过滤器：stat（监控）、wall（防SQL注入）、slf4j（日志）
       filters: stat,wall,slf4j
-      # 合并监控数据
-      use-global-data-source-stat: true
-      # 每个连接最多开启的预编译语句
-      max-open-prepared-statements: 20
-      # 设置异步初始化连接池
-      async-init: true
+
   #redis配置
   redis:
 #    #单机模式
