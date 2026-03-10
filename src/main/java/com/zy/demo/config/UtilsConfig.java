@@ -1,7 +1,10 @@
 package com.zy.demo.config;
 
+import com.ulisesbocchio.jasyptspringboot.properties.JasyptEncryptorConfigurationProperties;
 import com.zy.demo.util.ApplicationContextUtil;
 import com.zy.demo.util.I18nUtil;
+import com.zy.demo.util.JasyptUtil;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,5 +37,27 @@ public class UtilsConfig {
     @Bean(initMethod = "init")
     public ApplicationContextUtil applicationContextUtil() {
         return new ApplicationContextUtil();
+    }
+
+    /**
+     * Jasypt属性
+     *
+     * @return JasyptEncryptorConfigurationProperties
+     */
+    @Bean
+    @ConfigurationProperties(prefix = "jasypt.encryptor")
+    public JasyptEncryptorConfigurationProperties jasyptEncryptorConfigurationProperties() {
+        return new JasyptEncryptorConfigurationProperties();
+    }
+
+    /**
+     * Jasypt加密工具类
+     *
+     * @param jasyptEncryptorConfigurationProperties Jasypt属性
+     * @return JasyptUtil
+     */
+    @Bean
+    public JasyptUtil jasyptUtil(JasyptEncryptorConfigurationProperties jasyptEncryptorConfigurationProperties) {
+        return new JasyptUtil(jasyptEncryptorConfigurationProperties);
     }
 }
